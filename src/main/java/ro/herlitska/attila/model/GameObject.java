@@ -11,27 +11,41 @@ public abstract class GameObject {
 
     private ObjectSprite sprite;
     private boolean visible;
-    
+
     private GameWindow view;
-    
+
     public GameObject(double x, double y, ObjectSprite sprite) {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
     }
-    
+
     public void stepEvent() {
         sprite.stepEvent();
     }
-    
+
     public void drawEvent() {
-        view.draw(sprite.getImage(), x, y);
+        if (visible) {
+            view.draw(sprite.getImage(), x, y);
+        }
+    }
+
+    public void collisionEvent(GameObject other) {
+
     }
     
-    public void collisionEvent(GameObject other) {
+    public void keyPressedEvent(GameKeyCode key) {
         
     }
     
+    public void keyReleasedEvent(GameKeyCode key) {
+        
+    }
+    
+    public void keyDownEvent(GameKeyCode key) {
+        
+    }
+
     // Getters and setters
 
     public double getX() {
@@ -82,5 +96,4 @@ public abstract class GameObject {
         this.visible = visible;
     }
 
-    
 }

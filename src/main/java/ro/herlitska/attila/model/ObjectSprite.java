@@ -1,13 +1,14 @@
 package ro.herlitska.attila.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
 
 public class ObjectSprite {
 
-    List<Image> images;
-    private int animationSpeed;
+    List<Image> images = new ArrayList<>();
+    private int animationSpeed = 0;
     private int step = 0;
     private int currentImage = 0;
 

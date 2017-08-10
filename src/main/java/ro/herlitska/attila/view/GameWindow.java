@@ -25,7 +25,9 @@ public class GameWindow {
         
         this.ctr = ctr;
         
+        // handle canvas events
         canvas.setOnKeyPressed(e -> ctr.onKeyPressed(e));
+        canvas.setOnKeyReleased(e -> ctr.onKeyReleased(e));
     }
     
     public void drawEvent() {
