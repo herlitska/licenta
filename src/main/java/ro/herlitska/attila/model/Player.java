@@ -1,7 +1,7 @@
 package ro.herlitska.attila.model;
 
 public class Player extends GameObject {
-
+    
     public Player(double x, double y, ObjectSprite sprite) {
         super(x, y, sprite);
     }    
@@ -11,6 +11,7 @@ public class Player extends GameObject {
         switch (key) {
         case A:
             setX(getX() - 5);
+            getRoom().getView().drawEvent();
             break;
         case D:
             setX(getX() + 5);
@@ -24,5 +25,6 @@ public class Player extends GameObject {
         default:
             break;
         }
-    }
+    }   
+    
 }

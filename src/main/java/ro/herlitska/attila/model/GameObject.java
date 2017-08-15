@@ -1,7 +1,5 @@
 package ro.herlitska.attila.model;
 
-import ro.herlitska.attila.view.GameWindow;
-
 public abstract class GameObject {
 
     private double x;
@@ -10,9 +8,9 @@ public abstract class GameObject {
     private double speed;
 
     private ObjectSprite sprite;
-    private boolean visible;
+    private boolean visible = true;
 
-    private GameWindow view;
+    private GameRoom room;
 
     public GameObject(double x, double y, ObjectSprite sprite) {
         this.x = x;
@@ -26,7 +24,7 @@ public abstract class GameObject {
 
     public void drawEvent() {
         if (visible) {
-            view.draw(sprite.getImage(), x, y);
+            room.getView().draw(sprite.getImage(), x, y);
         }
     }
 
@@ -96,4 +94,12 @@ public abstract class GameObject {
         this.visible = visible;
     }
 
+    public void setRoom(GameRoom room) {
+        this.room = room;
+    }
+    
+    public GameRoom getRoom() {
+        return room;
+    }
+    
 }

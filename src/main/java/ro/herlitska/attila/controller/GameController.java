@@ -4,42 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.input.KeyEvent;
-import ro.herlitska.attila.model.GameObject;
+import ro.herlitska.attila.model.GameRoom;
+import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
-import ro.herlitska.attila.util.Utils;
 
-public class GameController implements Runnable {
+public class GameController implements Runnable, GameEventHandler {
 
     private boolean running = false;
     private Thread thread;
 
-    private List<GameObject> objects;
-
-    private final double COLLISION_DIST = 10.0;
+    private GameRoom room;
 
     private List<GameKeyCode> keysPressed = new ArrayList<>();
     private List<GameKeyCode> keysDown = new ArrayList<>();
     private  List<GameKeyCode> keysReleased = new ArrayList<>();
 
-    public GameController(List<GameObject> objects) {
-        this.objects = objects;
+    public GameController() {
     }
-
+    
     public synchronized void startGame() {
         thread = new Thread(this);
         thread.start();
         running = true;
+        System.out.println("game started");
     }
 
     public synchronized void endGame() {
         try {
-            thread.join();
+            System.out.println("ending game");
             running = false;
+            thread.join();            
+            System.out.println("game ended");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
     public synchronized void onKeyPressed(KeyEvent e) {
         switch (e.getCode()) {
         case A:
@@ -59,6 +60,7 @@ public class GameController implements Runnable {
         }
     }
     
+    @Override
     public synchronized void onKeyReleased(KeyEvent e) {
         switch (e.getCode()) {
         case A:
@@ -78,9 +80,9 @@ public class GameController implements Runnable {
         }
     }
 
-    public synchronized void createObject(GameObject object) {
-        objects.add(object);
-    }
+//    public synchronized void createObject(GameObject object) {
+//        objects.add(object);
+//    }
 
     @Override
     public void run() {
@@ -90,6 +92,7 @@ public class GameController implements Runnable {
         double delta = 0;
 
         while (running) {
+//            System.out.println("running");
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
@@ -102,45 +105,32 @@ public class GameController implements Runnable {
 
     private void step() {
         // step
-        objects.forEach(GameObject::stepEvent);
+        room.stepEvent();       
 
         // keyboard events
         for (GameKeyCode key : keysPressed) {
-            for (GameObject object : objects) {
-                object.keyPressedEvent(key);
-            }
+            room.keyPressedEvent(key);
         }
         keysPressed.clear();
         
         for (GameKeyCode key : keysDown) {
-            for (GameObject object : objects) {
-                object.keyDownEvent(key);
-            }
+            room.keyDownEvent(key);
         }
         
         for (GameKeyCode key : keysReleased) {
-            for (GameObject object : objects) {
-                object.keyReleasedEvent(key);
-            }
+            room.keyReleasedEvent(key);
         }
         keysReleased.clear();
         keysDown.clear();
 
         // collision
-        for (int i = 0; i < objects.size() - 1; i++) {
-            for (int j = i + 1; j < objects.size(); j++) {
-                GameObject first = objects.get(i);
-                GameObject second = objects.get(j);
-                if (Utils.dist(first.getX(), second.getX(), first.getY(), second.getY()) < COLLISION_DIST) {
-                    first.collisionEvent(second);
-                    second.collisionEvent(first);
-                }
-            }
-        }
+        room.checkCollision();
 
         // draw
-        objects.forEach(GameObject::drawEvent);
+        room.drawEvent();
     }
 
-    
+    public void setRoom(GameRoom room) {
+        this.room = room;
+    }
 }
