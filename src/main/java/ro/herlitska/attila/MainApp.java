@@ -44,7 +44,7 @@ public class MainApp extends Application {
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> {
             ctr.endGame();
-            Platform.exit();
+//            Platform.exit();
         });
         primaryStage.show();
     }

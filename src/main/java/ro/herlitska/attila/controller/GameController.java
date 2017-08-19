@@ -3,41 +3,43 @@ package ro.herlitska.attila.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyEvent;
 import ro.herlitska.attila.model.GameRoom;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 
-public class GameController implements Runnable, GameEventHandler {
+public class GameController implements GameEventHandler {
 
-    private boolean running = false;
-    private Thread thread;
+    final long startTime = System.nanoTime();
+
+    AnimationTimer gameLoop;
 
     private GameRoom room;
 
     private List<GameKeyCode> keysPressed = new ArrayList<>();
     private List<GameKeyCode> keysDown = new ArrayList<>();
-    private  List<GameKeyCode> keysReleased = new ArrayList<>();
+    private List<GameKeyCode> keysReleased = new ArrayList<>();
 
     public GameController() {
+        gameLoop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                System.out.println("step");
+                step();
+            }
+        };
     }
-    
-    public synchronized void startGame() {
-        thread = new Thread(this);
-        thread.start();
-        running = true;
+
+    public void startGame() {
+        gameLoop.start();
         System.out.println("game started");
     }
 
-    public synchronized void endGame() {
-        try {
-            System.out.println("ending game");
-            running = false;
-            thread.join();            
-            System.out.println("game ended");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void endGame() {
+        System.out.println("ending game");
+        gameLoop.stop();
+        System.out.println("game ended");
     }
 
     @Override
@@ -59,7 +61,7 @@ public class GameController implements Runnable, GameEventHandler {
             break;
         }
     }
-    
+
     @Override
     public synchronized void onKeyReleased(KeyEvent e) {
         switch (e.getCode()) {
@@ -80,43 +82,29 @@ public class GameController implements Runnable, GameEventHandler {
         }
     }
 
-//    public synchronized void createObject(GameObject object) {
-//        objects.add(object);
-//    }
-
-    @Override
-    public void run() {
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
-
-        while (running) {
-//            System.out.println("running");
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-            while (delta > 1) {
-                step();
-                delta--;
-            }
-        }
-    }
+    // public synchronized void createObject(GameObject object) {
+    // objects.add(object);
+    // }
 
     private void step() {
         // step
-        room.stepEvent();       
+        room.stepEvent();
+        
+        if (keysPressed.contains(GameKeyCode.S)) {
+            System.out.println("game ended");
+            endGame();
+        }
 
         // keyboard events
         for (GameKeyCode key : keysPressed) {
             room.keyPressedEvent(key);
         }
         keysPressed.clear();
-        
+
         for (GameKeyCode key : keysDown) {
             room.keyDownEvent(key);
         }
-        
+
         for (GameKeyCode key : keysReleased) {
             room.keyReleasedEvent(key);
         }
