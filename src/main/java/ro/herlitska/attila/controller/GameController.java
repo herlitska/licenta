@@ -2,8 +2,6 @@ package ro.herlitska.attila.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyEvent;
 import ro.herlitska.attila.model.GameRoom;
 import ro.herlitska.attila.model.GameEventHandler;
@@ -13,7 +11,7 @@ public class GameController implements GameEventHandler {
 
     final long startTime = System.nanoTime();
 
-    AnimationTimer gameLoop;
+//    AnimationTimer gameLoop;
 
     private GameRoom room;
 
@@ -21,6 +19,7 @@ public class GameController implements GameEventHandler {
     private List<GameKeyCode> keysDown = new ArrayList<>();
     private List<GameKeyCode> keysReleased = new ArrayList<>();
 
+    /*
     public GameController() {
         gameLoop = new AnimationTimer() {
             @Override
@@ -30,17 +29,18 @@ public class GameController implements GameEventHandler {
             }
         };
     }
+    */
 
-    public void startGame() {
-        gameLoop.start();
-        System.out.println("game started");
-    }
+//    public void startGame() {
+//       gameLoop.start();
+//        System.out.println("game started");
+//    }
 
-    public void endGame() {
-        System.out.println("ending game");
-        gameLoop.stop();
-        System.out.println("game ended");
-    }
+//    public void endGame() {
+//        System.out.println("ending game");
+//        gameLoop.stop();
+//        System.out.println("game ended");
+//    }
 
     @Override
     public synchronized void onKeyPressed(KeyEvent e) {
@@ -85,16 +85,12 @@ public class GameController implements GameEventHandler {
     // public synchronized void createObject(GameObject object) {
     // objects.add(object);
     // }
-
-    private void step() {
+    @Override
+    public void step() {
         // step
         room.stepEvent();
         
-        if (keysPressed.contains(GameKeyCode.S)) {
-            System.out.println("game ended");
-            endGame();
-        }
-
+        
         // keyboard events
         for (GameKeyCode key : keysPressed) {
             room.keyPressedEvent(key);

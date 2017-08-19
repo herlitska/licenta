@@ -3,7 +3,6 @@ package ro.herlitska.attila;
 import java.util.Arrays;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ro.herlitska.attila.controller.GameController;
@@ -25,25 +24,26 @@ public class MainApp extends Application {
         
         Player player = new Player(500, 500, new ObjectSprite(Arrays.asList("asd.jpg")));
         ctr = new GameController();
-        GameView view = new GameWindow(ctr);
+        GameWindow view = new GameWindow(ctr);
         
         GameRoom room = new GameRoom(Arrays.asList(player), view);
         
         player.setRoom(room);
         ctr.setRoom(room);
         
-        ctr.startGame();
+       
         
-        showGameWindow();
+        showGameWindow(view);
+        view.starloop();    
     }
 
-    public void showGameWindow() {
-        GameWindow gameWindow = new GameWindow(ctr);
+    public void showGameWindow(GameWindow gameWindow) {
+        
         primaryStage.setScene(new Scene(gameWindow.getRootPane()));
         primaryStage.setTitle("Zombie");
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> {
-            ctr.endGame();
+            gameWindow.endLoop();
 //            Platform.exit();
         });
         primaryStage.show();

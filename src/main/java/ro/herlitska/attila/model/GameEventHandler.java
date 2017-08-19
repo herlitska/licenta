@@ -7,4 +7,6 @@ public interface GameEventHandler {
     public void onKeyPressed(KeyEvent e);
     
     public void onKeyReleased(KeyEvent e);
+    
+    public void  step();
 }
