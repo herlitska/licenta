@@ -10,21 +10,26 @@ public class Player extends GameObject {
     public void keyDownEvent(GameKeyCode key) {
         switch (key) {
         case A:
-            setX(getX() - 5);
-            getRoom().getView().drawEvent();
+            setX(getX() - 2);
             break;
         case D:
-            setX(getX() + 5);
+            setX(getX() + 2);
+           
             break;
         case W:
-            setY(getY() - 5);
+            setY(getY() - 2);
+           
             break;
         case S:
-            setY(getY() + 5);
+            setY(getY() + 2);
+            
             break;
         default:
             break;
         }
-    }   
+    }
+      
+ 
+    
     
 }

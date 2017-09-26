@@ -24,10 +24,13 @@ public abstract class GameObject {
 
     public void drawEvent() {
         if (visible) {
-            room.getView().draw(sprite.getImage(), x, y);
+//            room.getView().draw(sprite.getImage(), x, y);
+        	room.getView().drawRect(x, y);
+        	
         }
     }
-
+    
+    
     public void collisionEvent(GameObject other) {
 
     }
