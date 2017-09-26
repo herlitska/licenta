@@ -1,12 +1,10 @@
 package ro.herlitska.attila.model;
 
-import javafx.scene.input.KeyEvent;
-
 public interface GameEventHandler {
 
-    public void onKeyPressed(KeyEvent e);
-    
-    public void onKeyReleased(KeyEvent e);
-    
-    public void  step();
+    public void keyPressed(GameKeyCode e);
+
+    public void keyReleased(GameKeyCode keyCode);
+
+    public void step();
 }
