@@ -1,108 +1,118 @@
 package ro.herlitska.attila.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public abstract class GameObject {
 
-    private double x;
-    private double y;
-    private double direction;
-    private double speed;
+	private double x;
+	private double y;
+	private double direction;
+	private double speed;
 
-    private ObjectSprite sprite;
-    private boolean visible = true;
+	private ObjectSprite sprite;
+	private boolean visible = true;
 
-    private GameRoom room;
+	private static AtomicInteger nextObjectId = new AtomicInteger();
 
-    public GameObject(double x, double y, ObjectSprite sprite) {
-        this.x = x;
-        this.y = y;
-        this.sprite = sprite;
-    }
+	private int id;
 
-    public void stepEvent() {
-        sprite.stepEvent();
-    }
+	private GameRoom room;
 
-    public void drawEvent() {
-        if (visible) {
-//            room.getView().draw(sprite.getImage(), x, y);
-        	room.getView().drawRect(x, y);
-        	
-        }
-    }
-    
-    
-    public void collisionEvent(GameObject other) {
+	public GameObject(double x, double y, ObjectSprite sprite) {
+		this.x = x;
+		this.y = y;
+		this.sprite = sprite;
+		this.id = nextObjectId.incrementAndGet();
+	}
 
-    }
-    
-    public void keyPressedEvent(GameKeyCode key) {
-        
-    }
-    
-    public void keyReleasedEvent(GameKeyCode key) {
-        
-    }
-    
-    public void keyDownEvent(GameKeyCode key) {
-        
-    }
+	public void destroy() {
 
-    // Getters and setters
+	}
 
-    public double getX() {
-        return x;
-    }
+	public void stepEvent() {
+		sprite.stepEvent();
+	}
 
-    public void setX(double x) {
-        this.x = x;
-    }
+	public void drawEvent() {
+		if (visible) {
+			// room.getView().draw(sprite.getImage(), x, y);
+			room.getView().drawRect(x, y);
 
-    public double getY() {
-        return y;
-    }
+		}
+	}
 
-    public void setY(double y) {
-        this.y = y;
-    }
+	public void collisionEvent(GameObject other) {
 
-    public double getDirection() {
-        return direction;
-    }
+	}
 
-    public void setDirection(double direction) {
-        this.direction = direction;
-    }
+	public void keyPressedEvent(GameKeyCode key) {
 
-    public double getSpeed() {
-        return speed;
-    }
+	}
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
+	public void keyReleasedEvent(GameKeyCode key) {
 
-    public ObjectSprite getSprite() {
-        return sprite;
-    }
+	}
 
-    public void setSprite(ObjectSprite sprite) {
-        this.sprite = sprite;
-    }
+	public void keyDownEvent(GameKeyCode key) {
 
-    public boolean isVisible() {
-        return visible;
-    }
+	}
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
+	// Getters and setters
 
-    public void setRoom(GameRoom room) {
-        this.room = room;
-    }
-    
-    public GameRoom getRoom() {
-        return room;
-    }
-    
+	public double getX() {
+		return x;
+	}
+
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public double getDirection() {
+		return direction;
+	}
+
+	public void setDirection(double direction) {
+		this.direction = direction;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public ObjectSprite getSprite() {
+		return sprite;
+	}
+
+	public void setSprite(ObjectSprite sprite) {
+		this.sprite = sprite;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public void setRoom(GameRoom room) {
+		this.room = room;
+	}
+
+	public GameRoom getRoom() {
+		return room;
+	}
+
 }

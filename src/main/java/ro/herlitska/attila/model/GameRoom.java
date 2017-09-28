@@ -18,6 +18,10 @@ public class GameRoom {
         this.view = view;
     }
     
+    public void destroyObject(GameObject object) {
+    	
+    }
+    
     public GameView getView() {
         return view;
     }
