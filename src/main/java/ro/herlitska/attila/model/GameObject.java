@@ -4,115 +4,120 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class GameObject {
 
-	private double x;
-	private double y;
-	private double direction;
-	private double speed;
+    private double x;
+    private double y;
+    private double direction;
+    private double speed;
 
-	private ObjectSprite sprite;
-	private boolean visible = true;
+    private GameSprite sprite;
+    private boolean visible = true;
 
-	private static AtomicInteger nextObjectId = new AtomicInteger();
+    private static AtomicInteger nextObjectId = new AtomicInteger();
 
-	private int id;
+    private final int id;
 
-	private GameRoom room;
+    private GameRoom room;
 
-	public GameObject(double x, double y, ObjectSprite sprite) {
-		this.x = x;
-		this.y = y;
-		this.sprite = sprite;
-		this.id = nextObjectId.incrementAndGet();
-	}
+    public GameObject(double x, double y, GameSprite sprite) {
+        this.x = x;
+        this.y = y;
+        this.sprite = sprite;
+        this.id = nextObjectId.incrementAndGet();
+    }
 
-	public void destroy() {
+    public void destroy() {
+        room.destroyObject(this);
+    }
 
-	}
+    public void stepEvent() {
+        sprite.stepEvent();
+    }
 
-	public void stepEvent() {
-		sprite.stepEvent();
-	}
+    public void drawEvent() {
+        
+    }
 
-	public void drawEvent() {
-		if (visible) {
-			// room.getView().draw(sprite.getImage(), x, y);
-			room.getView().drawRect(x, y);
+    public void collisionEvent(GameObject other) {
 
-		}
-	}
+    }
 
-	public void collisionEvent(GameObject other) {
+    public void keyPressedEvent(GameKeyCode key) {
 
-	}
+    }
 
-	public void keyPressedEvent(GameKeyCode key) {
+    public void keyReleasedEvent(GameKeyCode key) {
 
-	}
+    }
 
-	public void keyReleasedEvent(GameKeyCode key) {
+    public void keyDownEvent(GameKeyCode key) {
 
-	}
+    }
 
-	public void keyDownEvent(GameKeyCode key) {
+    @Override
+    public boolean equals(Object arg0) {
+        return this.id == ((GameObject) arg0).id;
+    };
 
-	}
+    // Getters and setters
 
-	// Getters and setters
+    public double getX() {
+        return x;
+    }
 
-	public double getX() {
-		return x;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setX(double x) {
-		this.x = x;
-	}
+    public void setX(double x) {
+        this.x = x;
+    }
 
-	public double getY() {
-		return y;
-	}
+    public double getY() {
+        return y;
+    }
 
-	public void setY(double y) {
-		this.y = y;
-	}
+    public void setY(double y) {
+        this.y = y;
+    }
 
-	public double getDirection() {
-		return direction;
-	}
+    public double getDirection() {
+        return direction;
+    }
 
-	public void setDirection(double direction) {
-		this.direction = direction;
-	}
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
 
-	public double getSpeed() {
-		return speed;
-	}
+    public double getSpeed() {
+        return speed;
+    }
 
-	public void setSpeed(double speed) {
-		this.speed = speed;
-	}
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
 
-	public ObjectSprite getSprite() {
-		return sprite;
-	}
+    public GameSprite getSprite() {
+        return sprite;
+    }
 
-	public void setSprite(ObjectSprite sprite) {
-		this.sprite = sprite;
-	}
+    public void setSprite(GameSprite sprite) {
+        this.sprite = sprite;
+    }
 
-	public boolean isVisible() {
-		return visible;
-	}
+    public boolean isVisible() {
+        return visible;
+    }
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
-	public void setRoom(GameRoom room) {
-		this.room = room;
-	}
+    public void setRoom(GameRoom room) {
+        this.room = room;
+    }
 
-	public GameRoom getRoom() {
-		return room;
-	}
+    public GameRoom getRoom() {
+        return room;
+    }
 
 }

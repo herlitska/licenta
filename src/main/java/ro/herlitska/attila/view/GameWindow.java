@@ -1,5 +1,9 @@
 package ro.herlitska.attila.view;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -9,14 +13,30 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
+import ro.herlitska.attila.model.GameObject;
+import ro.herlitska.attila.model.GameSprite;
 
 public class GameWindow implements GameView {
+
+    private class SpriteToDraw {
+        public final GameSprite sprite;
+        public final double x;
+        public final double y;
+
+        public SpriteToDraw(GameSprite sprite, double x, double y) {
+            this.sprite = sprite;
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     private Group rootPane;
     private Canvas canvas;
     private GraphicsContext gc;
     private AnimationTimer gameLoop;
     private Scene scene;
+
+    private List<SpriteToDraw> spritesToDraw;
 
     public GameWindow(GameEventHandler eventHandler) {
         rootPane = new Group();
@@ -75,15 +95,32 @@ public class GameWindow implements GameView {
     }
 
     @Override
-    public void drawEvent() {
+    public void preDrawEvent() {
+        spritesToDraw = new ArrayList<>();
+
         gc.fillText("text", 200, 300);
         gc.setFill(Color.GREEN);
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
     @Override
-    public void draw(Image image, double x, double y) {
-        gc.drawImage(image, x, y);
+    public void postDrawEvent() {
+        Collections.sort(spritesToDraw, (sprite1, sprite2) -> sprite2.sprite.getDepth() - sprite1.sprite.getDepth());
+        spritesToDraw.forEach(sprite -> gc.drawImage(sprite.sprite.getImage(), sprite.x, sprite.y));
+    }
+
+    @Override
+    public void drawObjectSprites(java.util.List<GameObject> objects) {
+        for (GameObject object : objects) {
+            if (object.isVisible()) {
+                spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY()));
+            }
+        }
+    }
+
+    @Override
+    public void draw(GameSprite sprite, double x, double y) {
+        spritesToDraw.add(new SpriteToDraw(sprite, x, y));
     }
 
     public Group getRootPane() {
@@ -98,10 +135,15 @@ public class GameWindow implements GameView {
         gameLoop.stop();
     }
 
-    @Override
     public void drawRect(double x, double y) {
         gc.setFill(Color.RED);
         gc.fillRect(x, y, 50, 50);
+    }
+    
+    @Override
+    public void drawRect(double x, double y, double w, double h) {
+        // TODO Auto-generated method stub
+        
     }
 
     public Scene getScene() {

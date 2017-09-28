@@ -7,7 +7,7 @@ public class Player extends GameObject {
 
 	public List<InventoryItem> inventory = new ArrayList<>();
 
-	public Player(double x, double y, ObjectSprite sprite) {
+	public Player(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
 	}
 
@@ -36,11 +36,17 @@ public class Player extends GameObject {
 
 	@Override
 	public void collisionEvent(GameObject other) {
+	    System.out.println("collision event");
 		if (other instanceof WeaponObject) {
 			inventory.add(new WeaponItem(((WeaponObject) other).getName(), ((WeaponObject) other).getDamage(),
 					((WeaponObject) other).getDurability(), other.getSprite()));
-			
+			other.destroy();
 		}
+	}
+	
+	@Override
+	public void drawEvent() {
+	    
 	}
 
 }

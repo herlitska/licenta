@@ -1,6 +1,7 @@
 package ro.herlitska.attila.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ro.herlitska.attila.util.Utils;
 import ro.herlitska.attila.view.GameView;
@@ -19,7 +20,7 @@ public class GameRoom {
     }
     
     public void destroyObject(GameObject object) {
-    	
+    	objects.remove(object);
     }
     
     public GameView getView() {
@@ -31,8 +32,12 @@ public class GameRoom {
     }
     
     public void drawEvent() {
-        view.drawEvent();
+        view.preDrawEvent();
+        
+        view.drawObjectSprites(objects);
         objects.forEach(GameObject::drawEvent);
+        
+        view.postDrawEvent();
     }
     
     public void keyPressedEvent(GameKeyCode key) {
@@ -46,7 +51,7 @@ public class GameRoom {
             for (int j = i + 1; j < objects.size(); j++) {
                 GameObject first = objects.get(i);
                 GameObject second = objects.get(j);
-                if (Utils.dist(first.getX(), second.getX(), first.getY(), second.getY()) < COLLISION_DIST) {
+                if (Utils.dist(first.getX(), first.getY(), second.getX(), second.getY()) < COLLISION_DIST) {
                     first.collisionEvent(second);
                     second.collisionEvent(first);
                 }
