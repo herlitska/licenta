@@ -14,44 +14,58 @@ import ro.herlitska.attila.view.GameWindow;
 
 public class MainApp extends Application {
 
-    private Stage primaryStage;
+	private Stage primaryStage;
 
-    private GameController ctr;
+	private GameController ctr;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		this.primaryStage = primaryStage;
 
-        Player player = new Player(500, 500, new GameSprite(Arrays.asList("/82592.png")));
-        WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "Baseball Bat", new GameSprite(Arrays.asList("/37689.png")));
-        
-        ctr = new GameController();
-        GameWindow view = new GameWindow(ctr);
+		Player player = new Player(500, 500, new GameSprite(Arrays.asList("/82592.png")));
+		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "Baseball Bat",
+				new GameSprite(Arrays.asList("/37689.png")));
+		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "Baseball Bat",
+				new GameSprite(Arrays.asList("/37689.png")));
+		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat",
+				new GameSprite(Arrays.asList("/37689.png")));
+		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat",
+				new GameSprite(Arrays.asList("/37689.png")));
+		WeaponObject weapon5 = new WeaponObject(450, 450, 1, 10, "Baseball Bat",
+				new GameSprite(Arrays.asList("/37689.png")));
 
-        GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon)), view);
+		ctr = new GameController();
+		GameWindow view = new GameWindow(ctr);
 
-        player.setRoom(room);
-        weapon.setRoom(room);
-        ctr.setRoom(room);
+		GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5)),
+				view);
 
-        showGameWindow(view);
-        view.starloop();
-    }
+		player.setRoom(room);
+		weapon.setRoom(room);
+		weapon2.setRoom(room);
+		weapon3.setRoom(room);
+		weapon4.setRoom(room);
+		weapon5.setRoom(room);
+		ctr.setRoom(room);
 
-    public void showGameWindow(GameWindow gameWindow) {
+		showGameWindow(view);
+		view.starloop();
+	}
 
-        primaryStage.setScene(gameWindow.getScene());
-        primaryStage.setTitle("Zombie");
-        primaryStage.setResizable(false);
-        primaryStage.setOnCloseRequest(e -> {
-            gameWindow.endLoop();
-            // Platform.exit();
-        });
-        primaryStage.show();
-    }
+	public void showGameWindow(GameWindow gameWindow) {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+		primaryStage.setScene(gameWindow.getScene());
+		primaryStage.setTitle("Zombie");
+		primaryStage.setResizable(false);
+		primaryStage.setOnCloseRequest(e -> {
+			gameWindow.endLoop();
+			// Platform.exit();
+		});
+		primaryStage.show();
+	}
+
+	public static void main(String[] args) {
+		launch(args);
+	}
 
 }

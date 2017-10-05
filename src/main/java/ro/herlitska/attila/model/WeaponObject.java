@@ -1,5 +1,6 @@
 package ro.herlitska.attila.model;
 
+
 public class WeaponObject extends GameObject {
 
     private String name;

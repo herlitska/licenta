@@ -3,6 +3,10 @@ package ro.herlitska.attila.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.View;
+
+import javafx.scene.image.Image;
+
 public class Player extends GameObject {
 
 	public List<InventoryItem> inventory = new ArrayList<>();
@@ -36,17 +40,20 @@ public class Player extends GameObject {
 
 	@Override
 	public void collisionEvent(GameObject other) {
-	    System.out.println("collision event");
-		if (other instanceof WeaponObject) {
+
+		System.out.println("collision event");
+		
+		if (other instanceof WeaponObject && inventory.size() < 4) {
 			inventory.add(new WeaponItem(((WeaponObject) other).getName(), ((WeaponObject) other).getDamage(),
 					((WeaponObject) other).getDurability(), other.getSprite()));
 			other.destroy();
 		}
+
 	}
-	
+
 	@Override
 	public void drawEvent() {
-	    
+		getRoom().getView().drawinventory(inventory);
 	}
 
 }

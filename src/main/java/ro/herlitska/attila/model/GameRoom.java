@@ -37,6 +37,7 @@ public class GameRoom {
         view.drawObjectSprites(objects);
         objects.forEach(GameObject::drawEvent);
         
+        
         view.postDrawEvent();
     }
     
