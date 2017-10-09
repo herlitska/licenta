@@ -6,13 +6,34 @@ import java.util.List;
 import javax.swing.text.View;
 
 import javafx.scene.image.Image;
+import ro.herlitska.attila.util.Utils;
 
 public class Player extends GameObject {
 
-	public List<InventoryItem> inventory = new ArrayList<>();
+	private List<InventoryItem> inventory = new ArrayList<>();
+
+	private String playerName;
+
+	private double angle = 0;
 
 	public Player(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
+	}
+
+	public double getAngle() {
+		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
 	}
 
 	@Override
@@ -42,7 +63,7 @@ public class Player extends GameObject {
 	public void collisionEvent(GameObject other) {
 
 		System.out.println("collision event");
-		
+
 		if (other instanceof WeaponObject && inventory.size() < 4) {
 			inventory.add(new WeaponItem(((WeaponObject) other).getName(), ((WeaponObject) other).getDamage(),
 					((WeaponObject) other).getDurability(), other.getSprite()));
@@ -54,6 +75,11 @@ public class Player extends GameObject {
 	@Override
 	public void drawEvent() {
 		getRoom().getView().drawinventory(inventory);
+	}
+
+	@Override
+	public void stepEvent() {
+		angle += 5;
 	}
 
 }

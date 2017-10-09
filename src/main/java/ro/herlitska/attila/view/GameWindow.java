@@ -12,11 +12,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.InventoryItem;
+import ro.herlitska.attila.model.Player;
 
 public class GameWindow implements GameView {
 
@@ -24,11 +26,21 @@ public class GameWindow implements GameView {
 		public final GameSprite sprite;
 		public final double x;
 		public final double y;
+		public final double angle;
 
-		public SpriteToDraw(GameSprite sprite, double x, double y) {
+		public SpriteToDraw(GameSprite sprite, double x, double y, double angle) {
 			this.sprite = sprite;
 			this.x = x;
 			this.y = y;
+			this.angle = angle;
+		}
+
+		public SpriteToDraw(GameSprite sprite, double x, double y) {
+			super();
+			this.sprite = sprite;
+			this.x = x;
+			this.y = y;
+			this.angle = 0;
 		}
 	}
 
@@ -115,7 +127,7 @@ public class GameWindow implements GameView {
 	@Override
 	public void postDrawEvent() {
 		Collections.sort(spritesToDraw, (sprite1, sprite2) -> sprite2.sprite.getDepth() - sprite1.sprite.getDepth());
-		spritesToDraw.forEach(sprite -> gc.drawImage(sprite.sprite.getImage(), sprite.x, sprite.y));
+		spritesToDraw.forEach(sprite -> drawRotatedImage(sprite.sprite.getImage(), sprite.angle, sprite.x, sprite.y));
 
 	}
 
@@ -123,7 +135,13 @@ public class GameWindow implements GameView {
 	public void drawObjectSprites(java.util.List<GameObject> objects) {
 		for (GameObject object : objects) {
 			if (object.isVisible()) {
-				spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY()));
+				if (object instanceof Player) {
+					spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(),
+							((Player) object).getAngle()));
+
+				} else {
+					spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY()));
+				}
 			}
 		}
 	}
@@ -167,6 +185,51 @@ public class GameWindow implements GameView {
 
 	public Scene getScene() {
 		return scene;
+	}
+
+	/**
+	 * Sets the transform for the GraphicsContext to rotate around a pivot
+	 * point.
+	 *
+	 * @param gc
+	 *            the graphics context the transform to applied to.
+	 * @param angle
+	 *            the angle of rotation.
+	 * @param px
+	 *            the x pivot co-ordinate for the rotation (in canvas
+	 *            co-ordinates).
+	 * @param py
+	 *            the y pivot co-ordinate for the rotation (in canvas
+	 *            co-ordinates).
+	 */
+	private void rotate(double angle, double px, double py) {
+		Rotate r = new Rotate(angle, px, py);
+		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+	}
+
+	/**
+	 * Draws an image on a graphics context.
+	 *
+	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the
+	 * point: (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
+	 *
+	 * @param gc
+	 *            the graphics context the image is to be drawn on.
+	 * @param angle
+	 *            the angle of rotation.
+	 * @param tlpx
+	 *            the top left x co-ordinate where the image will be plotted (in
+	 *            canvas co-ordinates).
+	 * @param tlpy
+	 *            the top left y co-ordinate where the image will be plotted (in
+	 *            canvas co-ordinates).
+	 */
+	private void drawRotatedImage(Image image, double angle, double tlpx, double tlpy) {
+		gc.save(); // saves the current state on stack, including the current
+					// transform
+		rotate(angle, tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2);
+		gc.drawImage(image, tlpx, tlpy);
+		gc.restore(); // back to original state (before rotation)
 	}
 
 }

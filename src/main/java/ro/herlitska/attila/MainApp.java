@@ -22,20 +22,46 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
-		Player player = new Player(500, 500, new GameSprite(Arrays.asList("/82592.png")));
+		GameSprite playerSprite = new GameSprite(
+				Arrays.asList("/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_0.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_1.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_2.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_3.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_4.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_5.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_6.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_7.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_8.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_9.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_10.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_11.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_12.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_13.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_14.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_15.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_16.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_17.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_18.png",
+						"/Top_Down_Survivor/Top_Down_Survivor/knife/move/survivor-move_knife_19.png"));
+
+		playerSprite.setAnimationSpeed(2);
+
+		Player player = new Player(500, 500, playerSprite);
 		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "Baseball Bat",
 				new GameSprite(Arrays.asList("/37689.png")));
-		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "Baseball Bat",
+		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "Baseball Bat2",
 				new GameSprite(Arrays.asList("/37689.png")));
-		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat",
+		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat3",
 				new GameSprite(Arrays.asList("/37689.png")));
-		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat",
+		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat4",
 				new GameSprite(Arrays.asList("/37689.png")));
-		WeaponObject weapon5 = new WeaponObject(450, 450, 1, 10, "Baseball Bat",
+		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
 				new GameSprite(Arrays.asList("/37689.png")));
 
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr);
+
+		player.setPlayerName("JOszef");
 
 		GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5)),
 				view);
