@@ -14,18 +14,8 @@ public class Player extends GameObject {
 
 	private String playerName;
 
-	private double angle = 0;
-
 	public Player(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
-	}
-
-	public double getAngle() {
-		return angle;
-	}
-
-	public void setAngle(double angle) {
-		this.angle = angle;
 	}
 
 	public String getPlayerName() {
@@ -78,8 +68,8 @@ public class Player extends GameObject {
 	}
 
 	@Override
-	public void stepEvent() {
-		angle += 5;
+	public void mouseMovedEvent(double mouseX, double mouseY) {
+		
 	}
 
 }

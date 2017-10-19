@@ -48,6 +48,10 @@ public class GameRoom {
 		}
 	}
 
+	public void mouseMovedEvent(double mouseX, double mouseY) {
+		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
+	}
+
 	public void checkCollision() {
 		for (int i = 0; i < objects.size() - 1; i++) {
 			for (int j = i + 1; j < objects.size(); j++) {

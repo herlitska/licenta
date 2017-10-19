@@ -105,6 +105,8 @@ public class GameWindow implements GameView {
 			}
 		});
 
+		scene.setOnMouseMoved(e -> eventHandler.mouseMoved(e.getSceneX(), e.getSceneY()));
+
 		canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
 	}
 
@@ -135,13 +137,9 @@ public class GameWindow implements GameView {
 	public void drawObjectSprites(java.util.List<GameObject> objects) {
 		for (GameObject object : objects) {
 			if (object.isVisible()) {
-				if (object instanceof Player) {
-					spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(),
-							((Player) object).getAngle()));
+				spritesToDraw
+						.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(), object.getAngle()));
 
-				} else {
-					spritesToDraw.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY()));
-				}
 			}
 		}
 	}

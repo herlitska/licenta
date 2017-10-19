@@ -10,6 +10,11 @@ public class GameController implements GameEventHandler {
 
 	private GameRoom room;
 
+	private boolean mouseMoved = false;
+
+	private double mouseX; 
+	private double mouseY;
+	
 	private Map<GameKeyCode, Boolean> keysDown = new HashMap<>();
 
 	public GameController() {
@@ -26,6 +31,13 @@ public class GameController implements GameEventHandler {
 	@Override
 	public void keyReleased(GameKeyCode keyCode) {
 		keysDown.put(keyCode, false);
+	}
+
+	@Override
+	public void mouseMoved(double mouseX, double mouseY) {
+		mouseMoved = true;
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
 	}
 
 	@Override
@@ -47,6 +59,11 @@ public class GameController implements GameEventHandler {
 
 		// distance
 		room.objectDistance();
+
+		if (mouseMoved) {
+			room.mouseMovedEvent(mouseX , mouseY);
+			mouseMoved = false;
+		}
 	}
 
 	public void setRoom(GameRoom room) {
