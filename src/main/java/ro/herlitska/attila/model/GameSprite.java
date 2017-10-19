@@ -17,7 +17,9 @@ public class GameSprite {
         images.add(new Image(GameSprite.class.getResource(imageUrl).toString()));
     }
 
+    
     public GameSprite(List<String> imageUrls) {
+    	System.out.println(imageUrls == null);
         imageUrls.forEach(url -> images.add(new Image(GameSprite.class.getResource(url).toString())));
     }
 

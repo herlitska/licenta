@@ -26,6 +26,12 @@ public abstract class GameObject {
 		this.id = nextObjectId.incrementAndGet();
 	}
 
+	public GameObject(double x, double y) {
+		this.x = x;
+		this.y = y;
+		this.id = nextObjectId.incrementAndGet();
+	}
+
 	public double getAngle() {
 		return angle;
 	}
@@ -63,7 +69,7 @@ public abstract class GameObject {
 	}
 
 	public void mouseMovedEvent(double mouseX, double mouseY) {
-		
+
 	}
 
 	@Override

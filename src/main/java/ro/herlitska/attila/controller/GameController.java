@@ -12,10 +12,12 @@ public class GameController implements GameEventHandler {
 
 	private boolean mouseMoved = false;
 
-	private double mouseX; 
+	private double mouseX;
 	private double mouseY;
-	
+
 	private Map<GameKeyCode, Boolean> keysDown = new HashMap<>();
+
+	private Map<GameKeyCode, Boolean> keysReleased = new HashMap<>();
 
 	public GameController() {
 		for (GameKeyCode keyCode : GameKeyCode.values()) {
@@ -31,6 +33,7 @@ public class GameController implements GameEventHandler {
 	@Override
 	public void keyReleased(GameKeyCode keyCode) {
 		keysDown.put(keyCode, false);
+		keysReleased.put(keyCode, true);
 	}
 
 	@Override
@@ -51,6 +54,13 @@ public class GameController implements GameEventHandler {
 			}
 		});
 
+		keysReleased.forEach((key, released) -> {
+			if (released) {
+				room.keyReleasedEvent(key);
+				keysReleased.put(key, false);
+			}
+		});
+
 		// collision
 		room.checkCollision();
 
@@ -61,7 +71,7 @@ public class GameController implements GameEventHandler {
 		room.objectDistance();
 
 		if (mouseMoved) {
-			room.mouseMovedEvent(mouseX , mouseY);
+			room.mouseMovedEvent(mouseX, mouseY);
 			mouseMoved = false;
 		}
 	}
