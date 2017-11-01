@@ -129,7 +129,8 @@ public class GameWindow implements GameView {
 	@Override
 	public void postDrawEvent() {
 		Collections.sort(spritesToDraw, (sprite1, sprite2) -> sprite2.sprite.getDepth() - sprite1.sprite.getDepth());
-		spritesToDraw.forEach(sprite -> drawRotatedImage(sprite.sprite.getImage(), sprite.angle, sprite.x, sprite.y));
+		spritesToDraw.forEach(sprite -> drawRotatedScaledImage(sprite.sprite.getImage(), sprite.angle, sprite.x,
+				sprite.y, sprite.sprite.getScale()));
 
 	}
 
@@ -222,11 +223,13 @@ public class GameWindow implements GameView {
 	 *            the top left y co-ordinate where the image will be plotted (in
 	 *            canvas co-ordinates).
 	 */
-	private void drawRotatedImage(Image image, double angle, double tlpx, double tlpy) {
+	private void drawRotatedScaledImage(Image image, double angle, double tlpx, double tlpy, double ratio) {
 		gc.save(); // saves the current state on stack, including the current
 					// transform
-		rotate(angle, tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2);
-		gc.drawImage(image, tlpx, tlpy);
+		rotate(angle, tlpx, tlpy);
+		gc.drawImage(image, tlpx - image.getWidth()*ratio / 2, tlpy - image.getHeight()*ratio / 2, image.getWidth()*ratio,
+				image.getHeight()*ratio);
+
 		gc.restore(); // back to original state (before rotation)
 	}
 

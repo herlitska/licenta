@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class GameSprite {
 
@@ -13,6 +14,7 @@ public class GameSprite {
 	private int step = 0;
 	private int currentImage = 0;
 	private int depth = 0;
+	private double scale = 1;
 
 	public GameSprite(String imageUrl) {
 		images.add(new Image(imageUrl));
@@ -42,7 +44,19 @@ public class GameSprite {
 		this.depth = depth;
 	}
 
+	public double getSize() {
+		return Math.max(images.get(currentImage).getWidth()*scale, images.get(currentImage).getHeight()*scale);
+	}
+
 	public void setAnimationSpeed(int animationSpeed) {
 		this.animationSpeed = animationSpeed;
+	}
+
+	public void setScale(double ratio) {
+		this.scale = ratio;
+	}
+
+	public double getScale() {
+		return scale;
 	}
 }

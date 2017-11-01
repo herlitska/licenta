@@ -10,6 +10,7 @@ import ro.herlitska.attila.model.GameRoom;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.Player;
 import ro.herlitska.attila.model.WeaponObject;
+import ro.herlitska.attila.model.Zombie;
 import ro.herlitska.attila.view.GameWindow;
 
 public class MainApp extends Application {
@@ -35,13 +36,14 @@ public class MainApp extends Application {
 				new GameSprite(Arrays.asList("/37689.png")));
 		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
 				new GameSprite(Arrays.asList("/37689.png")));
+		Zombie zombie = new Zombie(1000, 100);
 
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr);
 
 		player.setPlayerName("JOszef");
 
-		GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5)),
+		GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5, zombie)),
 				view);
 
 		player.setRoom(room);
@@ -50,6 +52,7 @@ public class MainApp extends Application {
 		weapon3.setRoom(room);
 		weapon4.setRoom(room);
 		weapon5.setRoom(room);
+		zombie.setRoom(room);
 		ctr.setRoom(room);
 
 		showGameWindow(view);

@@ -139,4 +139,9 @@ public abstract class GameObject {
 		return room;
 	}
 
+	public void move() {
+		x = x + speed * Math.cos(angle);
+		y = y + speed * Math.sin(angle);
+	}
+
 }

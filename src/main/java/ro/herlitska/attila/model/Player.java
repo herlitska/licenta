@@ -18,7 +18,7 @@ public class Player extends GameObject {
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
 	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
-	
+
 	private double mouseX = 0;
 	private double mouseY = 0;
 
@@ -45,18 +45,18 @@ public class Player extends GameObject {
 		setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.MOVE, weapon));
 		switch (key) {
 		case A:
-			setX(getX() - 2);
+			setX(getX() - 5);
 			break;
 		case D:
-			setX(getX() + 2);
+			setX(getX() + 5);
 
 			break;
 		case W:
-			setY(getY() - 2);
+			setY(getY() - 5);
 
 			break;
 		case S:
-			setY(getY() + 2);
+			setY(getY() + 5);
 
 			break;
 		default:
@@ -94,7 +94,7 @@ public class Player extends GameObject {
 		this.mouseY = mouseY;
 		setAngle(calcAngleBasedOnMouse());
 	}
-	
+
 	private double calcAngleBasedOnMouse() {
 		double dx = mouseX - getX();
 		// Minus to correct for coord re-mapping
@@ -108,7 +108,7 @@ public class Player extends GameObject {
 			inRads = Math.abs(inRads);
 		else
 			inRads = 2 * Math.PI - inRads;
-		
+
 		return Math.toDegrees(inRads);
 	}
 

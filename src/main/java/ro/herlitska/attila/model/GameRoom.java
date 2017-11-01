@@ -3,6 +3,7 @@ package ro.herlitska.attila.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javassist.expr.Instanceof;
 import ro.herlitska.attila.util.Utils;
 import ro.herlitska.attila.view.GameView;
 
@@ -19,6 +20,11 @@ public class GameRoom {
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
 		this.view = view;
+		for (GameObject object : objects) {
+			if (object instanceof Player) {
+				player = object;
+			}
+		}
 	}
 
 	public void destroyObject(GameObject object) {
@@ -28,6 +34,15 @@ public class GameRoom {
 	public GameView getView() {
 		return view;
 	}
+
+	public double getPlayerX() {
+		return player.getX();
+	}
+	
+	public double getPlayerY() {
+		return player.getY();
+	}
+
 
 	public void stepEvent() {
 		objects.forEach(GameObject::stepEvent);
@@ -57,7 +72,8 @@ public class GameRoom {
 			for (int j = i + 1; j < objects.size(); j++) {
 				GameObject first = objects.get(i);
 				GameObject second = objects.get(j);
-				if (Utils.dist(first.getX(), first.getY(), second.getX(), second.getY()) < COLLISION_DIST) {
+				if (Utils.dist(first.getX(), first.getY(), second.getX(),
+						second.getY()) < (first.getSprite().getSize() / 2 + second.getSprite().getSize() / 2)) {
 					first.collisionEvent(second);
 					second.collisionEvent(first);
 				}
