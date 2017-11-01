@@ -6,32 +6,28 @@ import java.util.List;
 import javax.swing.text.View;
 
 import javafx.scene.image.Image;
+import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
+import ro.herlitska.attila.model.GameSpriteFactory.PlayerWeapon;
 import ro.herlitska.attila.util.Utils;
 
 public class Player extends GameObject {
-
-	public enum PlayerMotion {
-		IDLE, MOVE, ATTACK
-	}
-
-	public enum PlayerWeapon {
-		KNIFE
-	}
 
 	private List<InventoryItem> inventory = new ArrayList<>();
 
 	private String playerName;
 
-	private PlayerMotion motion;
-
-	private PlayerWeapon weapon;
+	private PlayerMotion motion = PlayerMotion.IDLE;
+	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
+	
+	private double mouseX = 0;
+	private double mouseY = 0;
 
 	public Player(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
 	}
 
 	public Player(double x, double y) {
-		super(x, y, new GameSprite(Utils.getPlayerSpritePath(PlayerMotion.IDLE, PlayerWeapon.KNIFE)));
+		super(x, y, GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, PlayerWeapon.KNIFE));
 		getSprite().setAnimationSpeed(2);
 	}
 
@@ -46,7 +42,7 @@ public class Player extends GameObject {
 	@Override
 	public void keyDownEvent(GameKeyCode key) {
 		// TODO technical debt: creating too many sprite instances
-		setSprite(new GameSprite(Utils.getPlayerSpritePath(PlayerMotion.MOVE, weapon)));
+		setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.MOVE, weapon));
 		switch (key) {
 		case A:
 			setX(getX() - 2);
@@ -66,11 +62,12 @@ public class Player extends GameObject {
 		default:
 			break;
 		}
+		setAngle(calcAngleBasedOnMouse());
 	}
 
 	@Override
 	public void keyReleasedEvent(GameKeyCode key) {
-		setSprite(new GameSprite(Utils.getPlayerSpritePath(PlayerMotion.IDLE, weapon)));
+		setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, weapon));
 	}
 
 	@Override
@@ -93,6 +90,12 @@ public class Player extends GameObject {
 
 	@Override
 	public void mouseMovedEvent(double mouseX, double mouseY) {
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
+		setAngle(calcAngleBasedOnMouse());
+	}
+	
+	private double calcAngleBasedOnMouse() {
 		double dx = mouseX - getX();
 		// Minus to correct for coord re-mapping
 		double dy = -(mouseY - getY());
@@ -105,8 +108,8 @@ public class Player extends GameObject {
 			inRads = Math.abs(inRads);
 		else
 			inRads = 2 * Math.PI - inRads;
-
-		setAngle(Math.toDegrees(inRads));
+		
+		return Math.toDegrees(inRads);
 	}
 
 }
