@@ -51,9 +51,13 @@ public class GameSpriteFactory {
 
 	private static Map<ZombieMotion, GameSprite> zombieSprites = new HashMap<>();
 
+	private static GameSprite healthSprite;
+
 	private final static String PLAYER_SPRITE_PATH = "/Top_Down_Survivor/&wpn/&mtn/survivor-&mtn_&wpn_&num.png";
 
 	private static final String ZOMBIE_SPRITE_PATH = "/zombie_01/&mtn/&mtn_&num.png";
+
+	private static final String HEALTH_SPRITE_PATH = "/OLD/VIDA_&num.png";
 
 	public static GameSprite getPlayerSprite(PlayerMotion motion, PlayerWeapon weapon) {
 		PlayerSpriteSearchKey key = new PlayerSpriteSearchKey(motion, weapon);
@@ -112,6 +116,27 @@ public class GameSpriteFactory {
 			GameSprite sprite = new GameSprite(imageUrls);
 			zombieSprites.put(motion, sprite);
 			return sprite;
+		}
+
+	}
+
+	public static GameSprite getHealthSprite() {
+		if (healthSprite == null) {
+			int i = 0;
+
+			URL imageUrl = GameSpriteFactory.class.getResource(HEALTH_SPRITE_PATH.replace("&num", String.valueOf(i)));
+			List<String> imageUrls = new ArrayList<>();
+			while (imageUrl != null) {
+
+				imageUrls.add(imageUrl.toString());
+				imageUrl = GameSpriteFactory.class.getResource(HEALTH_SPRITE_PATH.replace("&num", String.valueOf(++i)));
+
+			}
+			GameSprite sprite = new GameSprite(imageUrls);
+
+			return sprite;
+		} else {
+			return healthSprite;
 		}
 
 	}

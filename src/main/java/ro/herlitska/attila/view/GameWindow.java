@@ -12,11 +12,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
+import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
 
@@ -44,6 +46,7 @@ public class GameWindow implements GameView {
 		}
 	}
 
+	private double playerHealth;
 	private Group rootPane;
 	private Canvas canvas;
 	private GraphicsContext gc;
@@ -118,19 +121,17 @@ public class GameWindow implements GameView {
 		gc.setFill(Color.GREEN);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		for (int i = 0; i < 4; i++) {
-			GameSprite invBackround = new GameSprite(Arrays.asList("/inventory_background.png"));
-			invBackround.setDepth(-99);
-			spritesToDraw.add(new SpriteToDraw(invBackround, 50 + i * 150, 500));
-		}
-
 	}
 
 	@Override
 	public void postDrawEvent() {
+
 		Collections.sort(spritesToDraw, (sprite1, sprite2) -> sprite2.sprite.getDepth() - sprite1.sprite.getDepth());
 		spritesToDraw.forEach(sprite -> drawRotatedScaledImage(sprite.sprite.getImage(), sprite.angle, sprite.x,
 				sprite.y, sprite.sprite.getScale()));
+		gc.setFill(Color.WHITE);
+		gc.setFont(new Font(null, 20));
+		gc.fillText(String.valueOf((int) playerHealth), 950, 670);
 
 	}
 
@@ -177,9 +178,24 @@ public class GameWindow implements GameView {
 	public void drawinventory(List<InventoryItem> inventory) {
 
 		for (int i = 0; i < inventory.size(); i++) {
-			spritesToDraw.add(new SpriteToDraw(inventory.get(i).getSprite(), 50 + i * 150, 500));
+			spritesToDraw.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
 		}
 
+		for (int i = 0; i < 4; i++) {
+			GameSprite invBackround = new GameSprite(Arrays.asList("/inventory_background.png"));
+			invBackround.setDepth(-99);
+			spritesToDraw.add(new SpriteToDraw(invBackround, 110 + i * 150, 650));
+		}
+
+	}
+
+	@Override
+	public void drawHealth(double health) {
+		playerHealth = health;
+		GameSprite sprite = GameSpriteFactory.getHealthSprite();
+		sprite.setImage((int) (health * 0.1));
+		sprite.setDepth(-100);
+		spritesToDraw.add(new SpriteToDraw(sprite, 800, 700));
 	}
 
 	public Scene getScene() {
@@ -227,8 +243,8 @@ public class GameWindow implements GameView {
 		gc.save(); // saves the current state on stack, including the current
 					// transform
 		rotate(angle, tlpx, tlpy);
-		gc.drawImage(image, tlpx - image.getWidth()*ratio / 2, tlpy - image.getHeight()*ratio / 2, image.getWidth()*ratio,
-				image.getHeight()*ratio);
+		gc.drawImage(image, tlpx - image.getWidth() * ratio / 2, tlpy - image.getHeight() * ratio / 2,
+				image.getWidth() * ratio, image.getHeight() * ratio);
 
 		gc.restore(); // back to original state (before rotation)
 	}

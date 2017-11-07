@@ -68,6 +68,8 @@ public class MainApp extends Application {
 			gameWindow.endLoop();
 			// Platform.exit();
 		});
+		primaryStage.setHeight(768);
+		primaryStage.setWidth(1024);
 		primaryStage.show();
 	}
 

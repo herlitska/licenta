@@ -15,6 +15,7 @@ public class Player extends GameObject {
 	private List<InventoryItem> inventory = new ArrayList<>();
 
 	private String playerName;
+	private double health = 10;
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
 	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
@@ -86,6 +87,7 @@ public class Player extends GameObject {
 	@Override
 	public void drawEvent() {
 		getRoom().getView().drawinventory(inventory);
+		getRoom().getView().drawHealth(health);
 	}
 
 	@Override

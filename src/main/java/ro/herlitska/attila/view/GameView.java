@@ -20,4 +20,6 @@ public interface GameView {
 	public void drawRect(double x, double y, double w, double h);
 
 	public void drawinventory(List<InventoryItem> inventory); // drawing the inventory
+	
+	public void drawHealth(double health);
 }

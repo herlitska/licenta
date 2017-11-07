@@ -45,7 +45,7 @@ public class GameSprite {
 	}
 
 	public double getSize() {
-		return Math.max(images.get(currentImage).getWidth()*scale, images.get(currentImage).getHeight()*scale);
+		return Math.max(images.get(currentImage).getWidth() * scale, images.get(currentImage).getHeight() * scale);
 	}
 
 	public void setAnimationSpeed(int animationSpeed) {
@@ -58,5 +58,9 @@ public class GameSprite {
 
 	public double getScale() {
 		return scale;
+	}
+
+	public void setImage(int i) {
+		currentImage = i;
 	}
 }
