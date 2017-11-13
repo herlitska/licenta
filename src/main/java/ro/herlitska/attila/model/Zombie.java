@@ -1,6 +1,7 @@
 package ro.herlitska.attila.model;
 
 import ro.herlitska.attila.model.GameSpriteFactory.ZombieMotion;
+import ro.herlitska.attila.util.Utils;
 
 public class Zombie extends GameObject {
 
@@ -9,6 +10,7 @@ public class Zombie extends GameObject {
 
 	public Zombie(double x, double y) {
 		super(x, y, GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
+		this.motion = ZombieMotion.RUN;
 		getSprite().setAnimationSpeed(1);
 		this.setSpeed(6);
 	}
@@ -20,16 +22,28 @@ public class Zombie extends GameObject {
 	@Override
 	public void stepEvent() {
 		super.stepEvent();
-		double angle = calcAngleBasedOnPlayerPos();
+		double playerX = getRoom().getPlayerX();
+		double playerY = getRoom().getPlayerY();
+		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
 		setAngle(angle);
 		setDirection(angle);
-		move();
+		if(!nextPosCollision()){
+			move();
+		}
+		System.out.println("motion is" + " " + motion + " " + "DIstance is " + Utils.dist(getX(), getY(), playerX, playerY));
+		if (Utils.dist(getX(), getY(), playerX, playerY) < 120 && !motion.equals(ZombieMotion.ATTACK)) {
+			motion = ZombieMotion.ATTACK;
+			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.ATTACK));
+		} else if (Utils.dist(getX(), getY(), playerX, playerY) > 120 && motion.equals(ZombieMotion.ATTACK)) {
+			motion = ZombieMotion.RUN;
+			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
+		}
 	}
 
-	private double calcAngleBasedOnPlayerPos() {
-		double dx = getRoom().getPlayerX() - getX();
+	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {
+		double dx = playerX - getX();
 		// Minus to correct for coord re-mapping
-		double dy = -(getRoom().getPlayerY() - getY());
+		double dy = -(playerY - getY());
 
 		double inRads = Math.atan2(dy, dx);
 
@@ -42,4 +56,5 @@ public class Zombie extends GameObject {
 
 		return Math.toDegrees(inRads);
 	}
+
 }

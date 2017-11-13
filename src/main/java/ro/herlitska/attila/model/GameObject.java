@@ -144,4 +144,8 @@ public abstract class GameObject {
 		y = y + speed * Math.sin(angle);
 	}
 
+	public boolean nextPosCollision() {
+		return room.checkCollision(this, x + speed * Math.cos(angle), y + speed * Math.sin(angle));
+	}
+
 }

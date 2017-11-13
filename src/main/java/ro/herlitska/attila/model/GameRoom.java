@@ -38,11 +38,10 @@ public class GameRoom {
 	public double getPlayerX() {
 		return player.getX();
 	}
-	
+
 	public double getPlayerY() {
 		return player.getY();
 	}
-
 
 	public void stepEvent() {
 		objects.forEach(GameObject::stepEvent);
@@ -73,7 +72,7 @@ public class GameRoom {
 				GameObject first = objects.get(i);
 				GameObject second = objects.get(j);
 				if (Utils.dist(first.getX(), first.getY(), second.getX(),
-						second.getY()) < (first.getSprite().getSize() / 2 + second.getSprite().getSize() / 2)) {
+						second.getY()) < (first.getSprite().getSize() / 2 + second.getSprite().getSize() / 2) - 20) {
 					first.collisionEvent(second);
 					second.collisionEvent(first);
 				}
@@ -104,8 +103,6 @@ public class GameRoom {
 
 					if (object2 instanceof WeaponObject) {
 						double dist = Utils.dist(object.getX(), object.getY(), object2.getX(), object2.getY());
-						System.out.println("Distance between " + ((Player) object).getPlayerName() + " and "
-								+ ((WeaponObject) object2).getName() + " is " + dist);
 
 					}
 
@@ -115,6 +112,23 @@ public class GameRoom {
 
 		}
 
+	}
+
+	public boolean checkCollision(GameObject object, double x, double y) {
+		System.out.println("objects reference" + " " + objects.contains(object));
+		for (int i = 0; i < objects.size(); i++) {
+			GameObject other = objects.get(i);
+
+			if (Utils.dist(other.getX(), other.getY(), object.getX(),
+					object.getY()) < (other.getSprite().getSize() / 2 + object.getSprite().getSize() / 2) - 20
+					&& !object.equals(other)) {
+				return true;
+			}else if(object.equals(other)){
+				System.out.println("object equals other");
+			}
+		}
+
+		return false;
 	}
 
 }

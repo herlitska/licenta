@@ -63,4 +63,5 @@ public class GameSprite {
 	public void setImage(int i) {
 		currentImage = i;
 	}
+
 }

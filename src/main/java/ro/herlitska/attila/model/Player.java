@@ -15,7 +15,7 @@ public class Player extends GameObject {
 	private List<InventoryItem> inventory = new ArrayList<>();
 
 	private String playerName;
-	private double health = 10;
+	private double health = 100;
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
 	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
@@ -74,7 +74,9 @@ public class Player extends GameObject {
 	@Override
 	public void collisionEvent(GameObject other) {
 
-		System.out.println("collision event");
+		if (other instanceof Zombie && health > 0) {
+			health -= 0.05;
+		}
 
 		if (other instanceof WeaponObject && inventory.size() < 4) {
 			inventory.add(new WeaponItem(((WeaponObject) other).getName(), ((WeaponObject) other).getDamage(),

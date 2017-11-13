@@ -23,8 +23,6 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
-				
-
 		Player player = new Player(500, 500);
 		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "Baseball Bat",
 				new GameSprite(Arrays.asList("/37689.png")));
@@ -37,13 +35,15 @@ public class MainApp extends Application {
 		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
 				new GameSprite(Arrays.asList("/37689.png")));
 		Zombie zombie = new Zombie(1000, 100);
+		Zombie zombie2 = new Zombie(1050, 300);
 
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr);
 
 		player.setPlayerName("JOszef");
 
-		GameRoom room = new GameRoom(new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5, zombie)),
+		GameRoom room = new GameRoom(
+				new ArrayList<>(Arrays.asList(player, weapon, weapon2, weapon3, weapon4, weapon5, zombie, zombie2)),
 				view);
 
 		player.setRoom(room);
@@ -53,6 +53,8 @@ public class MainApp extends Application {
 		weapon4.setRoom(room);
 		weapon5.setRoom(room);
 		zombie.setRoom(room);
+		zombie2.setRoom(room);
+
 		ctr.setRoom(room);
 
 		showGameWindow(view);
