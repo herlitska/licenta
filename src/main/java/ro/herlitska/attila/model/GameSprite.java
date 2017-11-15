@@ -21,7 +21,7 @@ public class GameSprite {
 	}
 
 	public GameSprite(List<String> imageUrls) {
-		System.out.println(imageUrls == null);
+//		System.out.println(imageUrls == null);
 		imageUrls.forEach(url -> images.add(new Image(url)));
 	}
 

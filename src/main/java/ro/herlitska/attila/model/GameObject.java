@@ -82,6 +82,10 @@ public abstract class GameObject {
 	public double getX() {
 		return x;
 	}
+	
+	public double getNextX() {
+		return x + speed * Math.cos(direction);
+	}
 
 	public int getId() {
 		return id;
@@ -93,6 +97,10 @@ public abstract class GameObject {
 
 	public double getY() {
 		return y;
+	}
+	
+	public double getNextY() {
+		return y + speed * Math.sin(direction);
 	}
 
 	public void setY(double y) {
@@ -140,12 +148,12 @@ public abstract class GameObject {
 	}
 
 	public void move() {
-		x = x + speed * Math.cos(angle);
-		y = y + speed * Math.sin(angle);
+		x = getNextX();
+		y = getNextY();
 	}
 
 	public boolean nextPosCollision() {
-		return room.checkCollision(this, x + speed * Math.cos(angle), y + speed * Math.sin(angle));
+		return room.inCollision(this, getNextX(), getNextY());
 	}
 
 }

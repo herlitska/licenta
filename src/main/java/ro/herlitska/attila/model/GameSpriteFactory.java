@@ -65,8 +65,8 @@ public class GameSpriteFactory {
 			return playerSprites.get(key);
 		} else {
 			int i = 0;
-			System.out.println(weapon.name().toLowerCase());
-			System.out.println(motion.name().toLowerCase());
+//			System.out.println(weapon.name().toLowerCase());
+//			System.out.println(motion.name().toLowerCase());
 			String playerSpritePath = PLAYER_SPRITE_PATH.replace("&wpn", weapon.name().toLowerCase()).replace("&mtn",
 					motion.name().toLowerCase());
 			URL imageUrl = GameSpriteFactory.class.getResource(playerSpritePath.replace("&num", String.valueOf(i)));

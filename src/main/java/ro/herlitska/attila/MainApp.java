@@ -35,7 +35,7 @@ public class MainApp extends Application {
 		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
 				new GameSprite(Arrays.asList("/37689.png")));
 		Zombie zombie = new Zombie(1000, 100);
-		Zombie zombie2 = new Zombie(1050, 300);
+		Zombie zombie2 = new Zombie(20, 300);
 
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr);

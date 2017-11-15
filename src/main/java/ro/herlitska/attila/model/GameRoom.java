@@ -66,20 +66,6 @@ public class GameRoom {
 		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
 	}
 
-	public void checkCollision() {
-		for (int i = 0; i < objects.size() - 1; i++) {
-			for (int j = i + 1; j < objects.size(); j++) {
-				GameObject first = objects.get(i);
-				GameObject second = objects.get(j);
-				if (Utils.dist(first.getX(), first.getY(), second.getX(),
-						second.getY()) < (first.getSprite().getSize() / 2 + second.getSprite().getSize() / 2) - 20) {
-					first.collisionEvent(second);
-					second.collisionEvent(first);
-				}
-			}
-		}
-	}
-
 	public void keyReleasedEvent(GameKeyCode key) {
 		for (GameObject object : objects) {
 			object.keyReleasedEvent(key);
@@ -93,42 +79,73 @@ public class GameRoom {
 	}
 
 	public void objectDistance() {
-
 		for (int i = 0; i < objects.size(); i++) {
 			GameObject object = objects.get(i);
 			if (object instanceof Player) {
 				for (int j = 0; j < objects.size(); j++) {
-
 					GameObject object2 = objects.get(j);
 
 					if (object2 instanceof WeaponObject) {
 						double dist = Utils.dist(object.getX(), object.getY(), object2.getX(), object2.getY());
-
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
-	public boolean checkCollision(GameObject object, double x, double y) {
-		System.out.println("objects reference" + " " + objects.contains(object));
+	public void checkCollision() {
+		for (int i = 0; i < objects.size() - 1; i++) {
+			for (int j = i + 1; j < objects.size(); j++) {
+				GameObject first = objects.get(i);
+				GameObject second = objects.get(j);
+				if (inCollision(first, first.getX(), first.getY(), second)) {
+					first.collisionEvent(second);
+					second.collisionEvent(first);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if <code>object</code> placed at (<code>x</code>,
+	 * <code>y</code>) would be in collision with another object.
+	 * 
+	 * @param object
+	 * @param x
+	 *            x coordinate of <code>object</code> where collision is checked
+	 * @param y
+	 *            y coordinate of <code>object</code> where collision is checked
+	 * @return
+	 */
+	public boolean inCollision(GameObject object, double x, double y) {
 		for (int i = 0; i < objects.size(); i++) {
 			GameObject other = objects.get(i);
 
-			if (Utils.dist(other.getX(), other.getY(), object.getX(),
-					object.getY()) < (other.getSprite().getSize() / 2 + object.getSprite().getSize() / 2) - 20
-					&& !object.equals(other)) {
+			if (inCollision(object, x, y, other)) {
+				System.out.println(true + " " + other.getClass().getTypeName());
 				return true;
-			}else if(object.equals(other)){
-				System.out.println("object equals other");
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if <code>object</code> placed at (<code>x</code>,
+	 * <code>y</code>) would be in collision with <code>other</code>.
+	 * 
+	 * @param object
+	 * @param x
+	 *            x coordinate of <code>object</code> where collision is checked
+	 * @param y
+	 *            y coordinate of <code>object</code> where collision is checked
+	 * @param other
+	 * @return
+	 */
+	private boolean inCollision(GameObject object, double x, double y, GameObject other) {
+		return (Utils.dist(other.getX(), other.getY(), x,
+				y) < (other.getSprite().getSize() / 2 + object.getSprite().getSize() / 2) - 20)
+				&& !object.equals(other);
 	}
 
 }

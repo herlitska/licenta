@@ -30,7 +30,8 @@ public class Zombie extends GameObject {
 		if(!nextPosCollision()){
 			move();
 		}
-		System.out.println("motion is" + " " + motion + " " + "DIstance is " + Utils.dist(getX(), getY(), playerX, playerY));
+//		move();
+//		System.out.println("motion is" + " " + motion + " " + "DIstance is " + Utils.dist(getX(), getY(), playerX, playerY));
 		if (Utils.dist(getX(), getY(), playerX, playerY) < 120 && !motion.equals(ZombieMotion.ATTACK)) {
 			motion = ZombieMotion.ATTACK;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.ATTACK));
