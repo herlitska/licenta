@@ -1,17 +1,12 @@
 package ro.herlitska.attila.model;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javassist.expr.Instanceof;
 import ro.herlitska.attila.util.Utils;
 import ro.herlitska.attila.view.GameView;
 
-public class GameRoom {
+public class GameRoom {	
 
-	private static final double COLLISION_DIST = 10.0;
-
-	// private GameController ctr;
 	private List<GameObject> objects;
 	private GameView view;
 
@@ -76,22 +71,7 @@ public class GameRoom {
 		for (GameObject object : objects) {
 			object.keyDownEvent(key);
 		}
-	}
-
-	public void objectDistance() {
-		for (int i = 0; i < objects.size(); i++) {
-			GameObject object = objects.get(i);
-			if (object instanceof Player) {
-				for (int j = 0; j < objects.size(); j++) {
-					GameObject object2 = objects.get(j);
-
-					if (object2 instanceof WeaponObject) {
-						double dist = Utils.dist(object.getX(), object.getY(), object2.getX(), object2.getY());
-					}
-				}
-			}
-		}
-	}
+	}	
 
 	public void checkCollision() {
 		for (int i = 0; i < objects.size() - 1; i++) {
@@ -122,7 +102,6 @@ public class GameRoom {
 			GameObject other = objects.get(i);
 
 			if (inCollision(object, x, y, other)) {
-				System.out.println(true + " " + other.getClass().getTypeName());
 				return true;
 			}
 		}
@@ -143,9 +122,8 @@ public class GameRoom {
 	 * @return
 	 */
 	private boolean inCollision(GameObject object, double x, double y, GameObject other) {
-		return (Utils.dist(other.getX(), other.getY(), x,
-				y) < (other.getSprite().getSize() / 2 + object.getSprite().getSize() / 2) - 20)
-				&& !object.equals(other);
+		return Utils.dist(other.getX(), other.getY(), x, y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
+				+ other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale() && !object.equals(other);
 	}
 
 }

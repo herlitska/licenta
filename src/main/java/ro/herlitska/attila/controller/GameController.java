@@ -67,9 +67,6 @@ public class GameController implements GameEventHandler {
 		// draw
 		room.drawEvent();
 
-		// distance
-		room.objectDistance();
-
 		if (mouseMoved) {
 			room.mouseMovedEvent(mouseX, mouseY);
 			mouseMoved = false;

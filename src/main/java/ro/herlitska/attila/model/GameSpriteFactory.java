@@ -18,8 +18,11 @@ public class GameSpriteFactory {
 	}
 
 	public enum ZombieMotion {
-		ATTACK, IDLE, RUN, WALK, DEATH
+		ATTACK, ATTACK01, ATTACK02, ATTACK03, IDLE, RUN, WALK, DEATH, DEATH01, DEATH02
 	}
+	
+	private static final double ZOMBIE_RADIUS = 25;
+	private static final double PLAYER_RADIUS = 78;
 
 	private static class PlayerSpriteSearchKey {
 		public final PlayerMotion motion;
@@ -65,8 +68,6 @@ public class GameSpriteFactory {
 			return playerSprites.get(key);
 		} else {
 			int i = 0;
-//			System.out.println(weapon.name().toLowerCase());
-//			System.out.println(motion.name().toLowerCase());
 			String playerSpritePath = PLAYER_SPRITE_PATH.replace("&wpn", weapon.name().toLowerCase()).replace("&mtn",
 					motion.name().toLowerCase());
 			URL imageUrl = GameSpriteFactory.class.getResource(playerSpritePath.replace("&num", String.valueOf(i)));
@@ -75,7 +76,7 @@ public class GameSpriteFactory {
 				imageUrls.add(imageUrl.toString());
 				imageUrl = GameSpriteFactory.class.getResource(playerSpritePath.replace("&num", String.valueOf(++i)));
 			}
-			GameSprite sprite = new GameSprite(imageUrls);
+			GameSprite sprite = new GameSprite(imageUrls, PLAYER_RADIUS);
 			playerSprites.put(key, sprite);
 			sprite.setScale(0.3);
 			return sprite;
@@ -83,38 +84,38 @@ public class GameSpriteFactory {
 	}
 
 	public static GameSprite getZombieSprite(ZombieMotion motion) {
-		if (zombieSprites.containsKey(motion)) {
-
-			return zombieSprites.get(motion);
+		ZombieMotion chosenMotion;
+		Random rand = new Random();
+		
+		if (motion.equals(ZombieMotion.ATTACK)) {
+			chosenMotion = ZombieMotion.valueOf("ATTACK0" + String.valueOf(rand.nextInt(2) + 1));
+		} else if (motion.equals(ZombieMotion.DEATH)) {
+			chosenMotion = ZombieMotion.valueOf("DEATH0" + String.valueOf(rand.nextInt(1) + 1));
+		} else {
+			chosenMotion = motion;
+		}
+		
+		if (zombieSprites.containsKey(chosenMotion)) {
+			return zombieSprites.get(chosenMotion);
 		} else {
 			int i = 0;
-			Random rand = new Random();
+			
 			String zombieSpritePath = ZOMBIE_SPRITE_PATH;
 
-			if (motion.equals(ZombieMotion.ATTACK)) {
-
-				zombieSpritePath = zombieSpritePath.replace("&mtn",
-						motion.name().toLowerCase() + "0" + String.valueOf(rand.nextInt(2) + 1));
-			} else if (motion.equals(ZombieMotion.DEATH)) {
-				zombieSpritePath = zombieSpritePath.replace("&mtn",
-						motion.name().toLowerCase() + "0" + String.valueOf(rand.nextInt(1) + 1));
-			} else {
-				zombieSpritePath = zombieSpritePath.replace("&mtn", motion.name().toLowerCase());
-			}
+			zombieSpritePath = zombieSpritePath.replace("&mtn", chosenMotion.name().toLowerCase());			
 
 			URL imageUrl = GameSpriteFactory.class
 					.getResource(zombieSpritePath.replace("&num", String.format("%04d", i)));
 
 			List<String> imageUrls = new ArrayList<>();
 			while (imageUrl != null) {
-
 				imageUrls.add(imageUrl.toString());
 				imageUrl = GameSpriteFactory.class
 						.getResource(zombieSpritePath.replace("&num", String.format("%04d", ++i)));
 
 			}
-			GameSprite sprite = new GameSprite(imageUrls);
-			zombieSprites.put(motion, sprite);
+			GameSprite sprite = new GameSprite(imageUrls, ZOMBIE_RADIUS);
+			zombieSprites.put(chosenMotion, sprite);
 			return sprite;
 		}
 

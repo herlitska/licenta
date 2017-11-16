@@ -8,11 +8,13 @@ public class Zombie extends GameObject {
 	private double health;
 	private ZombieMotion motion;
 
+	private boolean inCollisionWithPlayer = false;
+
 	public Zombie(double x, double y) {
 		super(x, y, GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
 		this.motion = ZombieMotion.RUN;
 		getSprite().setAnimationSpeed(1);
-		this.setSpeed(6);
+		this.setSpeed(3);
 	}
 
 	public Zombie(double x, double y, GameSprite sprite) {
@@ -22,22 +24,33 @@ public class Zombie extends GameObject {
 	@Override
 	public void stepEvent() {
 		super.stepEvent();
+
 		double playerX = getRoom().getPlayerX();
 		double playerY = getRoom().getPlayerY();
 		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
-		setAngle(angle);
-		setDirection(angle);
-		if(!nextPosCollision()){
+		if (Math.abs(getAngle() - angle) > 1) {
+			setAngle(angle);
+			setDirection(angle);
+		}
+		if (!nextPosCollision()) {
 			move();
 		}
-//		move();
-//		System.out.println("motion is" + " " + motion + " " + "DIstance is " + Utils.dist(getX(), getY(), playerX, playerY));
-		if (Utils.dist(getX(), getY(), playerX, playerY) < 120 && !motion.equals(ZombieMotion.ATTACK)) {
+
+		if (inCollisionWithPlayer && !motion.equals(ZombieMotion.ATTACK)) {
 			motion = ZombieMotion.ATTACK;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.ATTACK));
-		} else if (Utils.dist(getX(), getY(), playerX, playerY) > 120 && motion.equals(ZombieMotion.ATTACK)) {
+		} else if (!inCollisionWithPlayer && motion.equals(ZombieMotion.ATTACK)) {
 			motion = ZombieMotion.RUN;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
+		}
+
+		inCollisionWithPlayer = false;
+	}
+
+	@Override
+	public void collisionEvent(GameObject other) {
+		if (other instanceof Player) {
+			inCollisionWithPlayer = true;
 		}
 	}
 
