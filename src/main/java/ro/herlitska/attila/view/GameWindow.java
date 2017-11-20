@@ -45,6 +45,18 @@ public class GameWindow implements GameView {
 			this.angle = 0;
 		}
 	}
+	
+	private class TextToDraw {
+		public final String text;
+		public final double x;
+		public final double y;
+		
+		public TextToDraw(String text, double x, double y) {
+			this.text = text;
+			this.x = x;
+			this.y = y;
+		}
+	}
 
 	private double playerHealth;
 	private Group rootPane;
@@ -54,6 +66,7 @@ public class GameWindow implements GameView {
 	private Scene scene;
 
 	private List<SpriteToDraw> spritesToDraw;
+	private List<TextToDraw> textToDraw;
 
 	public GameWindow(GameEventHandler eventHandler) {
 		rootPane = new Group();
@@ -116,6 +129,7 @@ public class GameWindow implements GameView {
 	@Override
 	public void preDrawEvent() {
 		spritesToDraw = new ArrayList<>();
+		textToDraw = new ArrayList<>();
 
 		gc.fillText("text", 200, 300);
 		gc.setFill(Color.GREEN);
@@ -133,6 +147,9 @@ public class GameWindow implements GameView {
 		gc.setFont(new Font(null, 20));
 		gc.fillText(String.valueOf((int) playerHealth), 950, 670);
 
+		for (TextToDraw text : textToDraw) {
+			gc.fillText(text.text, text.x, text.y);
+		}
 	}
 
 	@Override
@@ -172,6 +189,11 @@ public class GameWindow implements GameView {
 	public void drawRect(double x, double y, double w, double h) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void drawText(String text, double x, double y) {
+		textToDraw.add(new TextToDraw(text, x, y));
 	}
 
 	@Override

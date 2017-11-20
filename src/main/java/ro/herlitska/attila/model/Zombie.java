@@ -14,7 +14,7 @@ public class Zombie extends GameObject {
 		super(x, y, GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
 		this.motion = ZombieMotion.RUN;
 		getSprite().setAnimationSpeed(1);
-		this.setSpeed(3);
+		this.setSpeed(5);
 	}
 
 	public Zombie(double x, double y, GameSprite sprite) {
@@ -23,15 +23,14 @@ public class Zombie extends GameObject {
 
 	@Override
 	public void stepEvent() {
-		super.stepEvent();
+		super.stepEvent();		
 
 		double playerX = getRoom().getPlayerX();
 		double playerY = getRoom().getPlayerY();
-		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
-		if (Math.abs(getAngle() - angle) > 1) {
-			setAngle(angle);
-			setDirection(angle);
-		}
+		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);		
+		setAngle(angle);
+		setDirection(angle);
+		
 		if (!nextPosCollision()) {
 			move();
 		}
@@ -52,6 +51,11 @@ public class Zombie extends GameObject {
 		if (other instanceof Player) {
 			inCollisionWithPlayer = true;
 		}
+	}
+	
+	@Override
+	public void drawEvent() {
+		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50);
 	}
 
 	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {

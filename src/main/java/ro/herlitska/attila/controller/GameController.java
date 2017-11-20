@@ -45,9 +45,6 @@ public class GameController implements GameEventHandler {
 
 	@Override
 	public void step() {
-		// step
-		room.stepEvent();
-
 		keysDown.forEach((key, down) -> {
 			if (down) {
 				room.keyDownEvent(key);
@@ -60,6 +57,9 @@ public class GameController implements GameEventHandler {
 				keysReleased.put(key, false);
 			}
 		});
+		
+		// step
+		room.stepEvent();
 
 		// collision
 		room.checkCollision();
