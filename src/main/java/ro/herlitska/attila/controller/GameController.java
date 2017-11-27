@@ -2,6 +2,8 @@ package ro.herlitska.attila.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameRoom;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
@@ -11,6 +13,9 @@ public class GameController implements GameEventHandler {
 	private GameRoom room;
 
 	private boolean mouseMoved = false;
+	private boolean mouseClicked = false;
+
+	private MouseButton button;
 
 	private double mouseX;
 	private double mouseY;
@@ -74,9 +79,22 @@ public class GameController implements GameEventHandler {
 			room.mouseMovedEvent(mouseX, mouseY);
 			mouseMoved = false;
 		}
+
+		if (mouseClicked) {
+
+			room.mouseClickedEvent(button);
+			mouseClicked = false;
+		}
 	}
 
 	public void setRoom(GameRoom room) {
 		this.room = room;
+	}
+
+	@Override
+	public void mouseClicked(MouseButton button) { // my addition
+		mouseClicked = true;
+		this.button = button;
+
 	}
 }

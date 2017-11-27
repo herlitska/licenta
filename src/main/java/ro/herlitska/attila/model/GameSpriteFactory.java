@@ -62,14 +62,21 @@ public class GameSpriteFactory {
 	public static GameSprite getPlayerSprite(PlayerMotion motion, PlayerWeapon weapon) {
 		PlayerSpriteSearchKey key = new PlayerSpriteSearchKey(motion, weapon);
 		if (playerSprites.containsKey(key)) {
-			return playerSprites.get(key);
+			GameSprite sprite = playerSprites.get(key);
+			if (motion == PlayerMotion.ATTACK) {
+				sprite.restartAnimation();
+			}
+			return sprite;
+
 		} else {
 			int i = 0;
-//			System.out.println(weapon.name().toLowerCase());
-//			System.out.println(motion.name().toLowerCase());
+			// System.out.println(weapon.name().toLowerCase());
+			// System.out.println(motion.name().toLowerCase());
+
 			String playerSpritePath = PLAYER_SPRITE_PATH.replace("&wpn", weapon.name().toLowerCase()).replace("&mtn",
 					motion.name().toLowerCase());
 			URL imageUrl = GameSpriteFactory.class.getResource(playerSpritePath.replace("&num", String.valueOf(i)));
+			System.out.println(imageUrl.toString());
 			List<String> imageUrls = new ArrayList<>();
 			while (imageUrl != null) {
 				imageUrls.add(imageUrl.toString());
@@ -78,6 +85,9 @@ public class GameSpriteFactory {
 			GameSprite sprite = new GameSprite(imageUrls);
 			playerSprites.put(key, sprite);
 			sprite.setScale(0.3);
+			if (motion == PlayerMotion.ATTACK) {
+				sprite.setRepeatable(false);
+			}
 			return sprite;
 		}
 	}

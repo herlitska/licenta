@@ -15,20 +15,22 @@ public class GameSprite {
 	private int currentImage = 0;
 	private int depth = 0;
 	private double scale = 1;
+	private boolean repeatable = true;
 
 	public GameSprite(String imageUrl) {
 		images.add(new Image(imageUrl));
 	}
 
 	public GameSprite(List<String> imageUrls) {
-//		System.out.println(imageUrls == null);
+		// System.out.println(imageUrls == null);
 		imageUrls.forEach(url -> images.add(new Image(url)));
 	}
 
 	public void stepEvent() {
-		if (step == animationSpeed) {
+		if (step == animationSpeed && (repeatable || currentImage != images.size() - 1)) {
 			currentImage = (currentImage + 1) % (images.size());
 		}
+
 		step = (step + 1) % (animationSpeed + 1);
 	}
 
@@ -62,6 +64,22 @@ public class GameSprite {
 
 	public void setImage(int i) {
 		currentImage = i;
+	}
+
+	public void setRepeatable(boolean repeatable) {
+		this.repeatable = repeatable;
+	}
+
+	public boolean isRepeatable() {
+		return repeatable;
+	}
+
+	public boolean animationEnded() {
+		return currentImage == images.size() - 1 && !repeatable;
+	}
+
+	public void restartAnimation() {
+		currentImage = 0;
 	}
 
 }

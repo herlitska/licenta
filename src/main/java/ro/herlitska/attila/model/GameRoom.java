@@ -3,6 +3,7 @@ package ro.herlitska.attila.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.scene.input.MouseButton;
 import javassist.expr.Instanceof;
 import ro.herlitska.attila.util.Utils;
 import ro.herlitska.attila.view.GameView;
@@ -66,6 +67,12 @@ public class GameRoom {
 		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
 	}
 
+	public void mouseClickedEvent(MouseButton button) {
+		System.out.println("Game Room mouse clicked");
+		System.out.println(button);
+		objects.forEach(object -> object.mouseClickedEvent(button));
+	}
+
 	public void keyReleasedEvent(GameKeyCode key) {
 		for (GameObject object : objects) {
 			object.keyReleasedEvent(key);
@@ -107,8 +114,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (<code>x</code>,
-	 * <code>y</code>) would be in collision with another object.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with another
+	 * object.
 	 * 
 	 * @param object
 	 * @param x
@@ -122,7 +130,8 @@ public class GameRoom {
 			GameObject other = objects.get(i);
 
 			if (inCollision(object, x, y, other)) {
-				System.out.println(true + " " + other.getClass().getTypeName());
+				// System.out.println(true + " " +
+				// other.getClass().getTypeName());
 				return true;
 			}
 		}
@@ -131,8 +140,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (<code>x</code>,
-	 * <code>y</code>) would be in collision with <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with
+	 * <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x

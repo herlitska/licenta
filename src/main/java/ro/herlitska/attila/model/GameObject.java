@@ -2,6 +2,8 @@ package ro.herlitska.attila.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.scene.input.MouseButton;
+
 public abstract class GameObject {
 
 	private double x;
@@ -70,6 +72,10 @@ public abstract class GameObject {
 
 	public void mouseMovedEvent(double mouseX, double mouseY) {
 
+	}
+	
+	public void mouseClickedEvent(MouseButton button){ // my addition
+		
 	}
 
 	@Override

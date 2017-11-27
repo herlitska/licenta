@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.text.View;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerWeapon;
 import ro.herlitska.attila.util.Utils;
@@ -41,9 +42,20 @@ public class Player extends GameObject {
 	}
 
 	@Override
+	public void stepEvent() {
+		super.stepEvent();
+		if (!getSprite().isRepeatable() && getSprite().animationEnded()) {
+			motion = PlayerMotion.IDLE;
+			setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, weapon));
+		}
+	}
+
+	@Override
 	public void keyDownEvent(GameKeyCode key) {
-		// TODO technical debt: creating too many sprite instances
-		setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.MOVE, weapon));
+		if (motion != PlayerMotion.ATTACK && motion != PlayerMotion.MOVE) {
+			motion = PlayerMotion.MOVE;
+			setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.MOVE, weapon));
+		}
 		switch (key) {
 		case A:
 			setX(getX() - 5);
@@ -68,6 +80,7 @@ public class Player extends GameObject {
 
 	@Override
 	public void keyReleasedEvent(GameKeyCode key) {
+		motion = PlayerMotion.IDLE;
 		setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, weapon));
 	}
 
@@ -97,6 +110,15 @@ public class Player extends GameObject {
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		setAngle(calcAngleBasedOnMouse());
+	}
+
+	@Override
+	public void mouseClickedEvent(MouseButton button) { // my addition
+		if (button.equals(MouseButton.PRIMARY)) {
+			motion = PlayerMotion.ATTACK;
+			setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK, weapon));
+		}
+		System.out.println("player mouse clicked event");
 	}
 
 	private double calcAngleBasedOnMouse() {

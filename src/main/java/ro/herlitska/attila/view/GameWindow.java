@@ -110,7 +110,13 @@ public class GameWindow implements GameView {
 
 		scene.setOnMouseMoved(e -> eventHandler.mouseMoved(e.getSceneX(), e.getSceneY()));
 
-		canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
+		// canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
+
+		scene.setOnMouseClicked(e -> {
+			eventHandler.mouseClicked(e.getButton());
+			System.out.println(e.getButton());
+		});
+
 	}
 
 	@Override
