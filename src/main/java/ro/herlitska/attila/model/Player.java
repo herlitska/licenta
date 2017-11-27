@@ -86,7 +86,6 @@ public class Player extends GameObject {
 
 	@Override
 	public void collisionEvent(GameObject other) {
-
 		if (other instanceof Zombie && health > 0) {
 			health -= 0.05;
 		}

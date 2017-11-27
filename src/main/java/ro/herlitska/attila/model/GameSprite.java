@@ -1,11 +1,9 @@
 package ro.herlitska.attila.model;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class GameSprite {
 
@@ -15,15 +13,23 @@ public class GameSprite {
 	private int currentImage = 0;
 	private int depth = 0;
 	private double scale = 1;
+
 	private boolean repeatable = true;
+
+	private double boundingCircleRadius;
 
 	public GameSprite(String imageUrl) {
 		images.add(new Image(imageUrl));
 	}
 
 	public GameSprite(List<String> imageUrls) {
-		// System.out.println(imageUrls == null);
 		imageUrls.forEach(url -> images.add(new Image(url)));
+		boundingCircleRadius = calcDefaultBoundingCircleRadius(images.get(0));
+	}
+
+	public GameSprite(List<String> imageUrls, double boundingCircleRadius) {
+		imageUrls.forEach(url -> images.add(new Image(url)));
+		this.boundingCircleRadius = boundingCircleRadius;
 	}
 
 	public void stepEvent() {
@@ -32,6 +38,14 @@ public class GameSprite {
 		}
 
 		step = (step + 1) % (animationSpeed + 1);
+	}
+
+	private double calcDefaultBoundingCircleRadius(Image img) {
+		return Math.min(img.getWidth(), img.getHeight()) / 2;
+	}
+
+	public double getBoundingCircleRadius() {
+		return boundingCircleRadius;
 	}
 
 	public Image getImage() {
