@@ -1,12 +1,15 @@
 package ro.herlitska.attila.model;
 
+import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
 import ro.herlitska.attila.model.GameSpriteFactory.ZombieMotion;
 import ro.herlitska.attila.util.Utils;
 
 public class Zombie extends GameObject {
 
-	private double health;
+	private double health = 5;
 	private ZombieMotion motion;
+
+	private Player player;
 
 	private boolean inCollisionWithPlayer = false;
 
@@ -23,14 +26,14 @@ public class Zombie extends GameObject {
 
 	@Override
 	public void stepEvent() {
-		super.stepEvent();		
+		super.stepEvent();
 
 		double playerX = getRoom().getPlayerX();
 		double playerY = getRoom().getPlayerY();
-		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);		
+		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
 		setAngle(angle);
 		setDirection(angle);
-		
+
 		if (!nextPosCollision()) {
 			move();
 		}
@@ -43,6 +46,18 @@ public class Zombie extends GameObject {
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
 		}
 
+		if (health > 0 && inCollisionWithPlayer) { // my addition
+													// player.getMotion().equals(PlayerMotion.ATTACK))
+			health -= 5;
+		}
+
+		if (health <= 0) { // my
+							// addition
+			motion = ZombieMotion.DEATH;
+			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
+		}
+		System.out.println(health);
+		// System.out.println(player.getMotion().toString());
 		inCollisionWithPlayer = false;
 	}
 
@@ -51,8 +66,9 @@ public class Zombie extends GameObject {
 		if (other instanceof Player) {
 			inCollisionWithPlayer = true;
 		}
+
 	}
-	
+
 	@Override
 	public void drawEvent() {
 		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50);

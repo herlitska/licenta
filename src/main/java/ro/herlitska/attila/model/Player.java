@@ -41,6 +41,10 @@ public class Player extends GameObject {
 		this.playerName = playerName;
 	}
 
+	public PlayerMotion getMotion() { // my addition
+		return motion;
+	}
+
 	@Override
 	public void stepEvent() {
 		super.stepEvent();

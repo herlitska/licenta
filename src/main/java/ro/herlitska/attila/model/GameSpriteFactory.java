@@ -126,6 +126,9 @@ public class GameSpriteFactory {
 			}
 			GameSprite sprite = new GameSprite(imageUrls, ZOMBIE_RADIUS);
 			zombieSprites.put(chosenMotion, sprite);
+			if(motion == ZombieMotion.DEATH){ // my addition
+				sprite.setRepeatable(false);
+			}
 			return sprite;
 		}
 
