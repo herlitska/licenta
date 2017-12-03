@@ -86,7 +86,7 @@ public class GameRoom {
 			for (int j = i + 1; j < objects.size(); j++) {
 				GameObject first = objects.get(i);
 				GameObject second = objects.get(j);
-				if (inCollision(first, first.getX(), first.getY(), second)) {
+				if (inCollision(first, first.getX(), first.getY(), second, false)) {
 					first.collisionEvent(second);
 					second.collisionEvent(first);
 				}
@@ -106,11 +106,11 @@ public class GameRoom {
 	 *            y coordinate of <code>object</code> where collision is checked
 	 * @return
 	 */
-	public boolean inCollision(GameObject object, double x, double y) {
+	public boolean inCollision(GameObject object, double x, double y, boolean onlySolid) {
 		for (int i = 0; i < objects.size(); i++) {
 			GameObject other = objects.get(i);
 
-			if (inCollision(object, x, y, other)) {
+			if (inCollision(object, x, y, other, onlySolid)) {
 				return true;
 			}
 		}
@@ -131,11 +131,11 @@ public class GameRoom {
 	 * @param other
 	 * @return
 	 */
-	private boolean inCollision(GameObject object, double x, double y, GameObject other) {
+	private boolean inCollision(GameObject object, double x, double y, GameObject other, boolean onlySolid) {
 		return Utils.dist(other.getX(), other.getY(), x,
 				y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
 						+ other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale()
-				&& !object.equals(other);
+				&& !object.equals(other) && (!onlySolid || (object.isSolid() && other.isSolid()));
 	}
 
 }

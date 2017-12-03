@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import ro.herlitska.attila.controller.GameController;
 import ro.herlitska.attila.model.GameRoom;
 import ro.herlitska.attila.model.GameSprite;
+import ro.herlitska.attila.model.GameSpriteFactory;
+import ro.herlitska.attila.model.GameSpriteFactory.WeaponType;
 import ro.herlitska.attila.model.Player;
 import ro.herlitska.attila.model.WeaponObject;
 import ro.herlitska.attila.model.Zombie;
@@ -24,16 +26,20 @@ public class MainApp extends Application {
 		this.primaryStage = primaryStage;
 
 		Player player = new Player(500, 500);
-		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "Baseball Bat",
-				new GameSprite(Arrays.asList("/37689.png")));
-		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "Baseball Bat2",
-				new GameSprite(Arrays.asList("/37689.png")));
+		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "kitchen_knife_by_ashmo.png",
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "kitchen_knife_by_ashmo.png",
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+
 		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat3",
-				new GameSprite(Arrays.asList("/37689.png")));
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+
 		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat4",
-				new GameSprite(Arrays.asList("/37689.png")));
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+
 		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
-				new GameSprite(Arrays.asList("/37689.png")));
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+
 		Zombie zombie = new Zombie(1000, 100);
 		Zombie zombie2 = new Zombie(20, 300);
 
@@ -48,6 +54,11 @@ public class MainApp extends Application {
 
 		player.setRoom(room);
 		weapon.setRoom(room);
+		weapon.setSolid(false);
+		weapon2.setSolid(false);
+		weapon3.setSolid(false);
+		weapon4.setSolid(false);
+		weapon5.setSolid(false);
 		weapon2.setRoom(room);
 		weapon3.setRoom(room);
 		weapon4.setRoom(room);

@@ -2,6 +2,7 @@ package ro.herlitska.attila.model;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,10 @@ public class GameSpriteFactory {
 
 	public enum ZombieMotion {
 		ATTACK, ATTACK01, ATTACK02, ATTACK03, IDLE, RUN, WALK, DEATH, DEATH01, DEATH02
+	}
+
+	public enum WeaponType {
+		KNIFE, PISTOL, RIFLE, SHOTGUN
 	}
 
 	private static final double ZOMBIE_RADIUS = 25;
@@ -53,6 +58,8 @@ public class GameSpriteFactory {
 	private static Map<PlayerSpriteSearchKey, GameSprite> playerSprites = new HashMap<>();
 
 	private static Map<ZombieMotion, GameSprite> zombieSprites = new HashMap<>();
+
+	private static Map<WeaponType, GameSprite> weaponSprites = new HashMap<>();
 
 	private static GameSprite healthSprite;
 
@@ -126,7 +133,7 @@ public class GameSpriteFactory {
 			}
 			GameSprite sprite = new GameSprite(imageUrls, ZOMBIE_RADIUS);
 			zombieSprites.put(chosenMotion, sprite);
-			if(motion == ZombieMotion.DEATH){ // my addition
+			if (motion == ZombieMotion.DEATH) { // my addition
 				sprite.setRepeatable(false);
 			}
 			return sprite;
@@ -151,6 +158,27 @@ public class GameSpriteFactory {
 			return sprite;
 		} else {
 			return healthSprite;
+		}
+
+	}
+
+	public static GameSprite getWeaponSprite(WeaponType weaponType) {
+		if (weaponSprites.containsKey(weaponType)) {
+			return weaponSprites.get(weaponType);
+		} else {
+			GameSprite sprite = null;
+			switch (weaponType) {
+			case KNIFE:
+				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo.png"));
+				break;
+
+			default:
+				break;
+			}
+			sprite.setScale(0.4);
+			sprite.setDepth(100);
+			weaponSprites.put(weaponType, sprite);
+			return sprite;
 		}
 
 	}

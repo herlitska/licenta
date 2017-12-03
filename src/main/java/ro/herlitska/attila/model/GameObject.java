@@ -14,6 +14,7 @@ public abstract class GameObject {
 
 	private GameSprite sprite;
 	private boolean visible = true;
+	private boolean solid = true;
 
 	private static AtomicInteger nextObjectId = new AtomicInteger();
 
@@ -73,9 +74,9 @@ public abstract class GameObject {
 	public void mouseMovedEvent(double mouseX, double mouseY) {
 
 	}
-	
-	public void mouseClickedEvent(MouseButton button){ // my addition
-		
+
+	public void mouseClickedEvent(MouseButton button) { // my addition
+
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public abstract class GameObject {
 	public double getX() {
 		return x;
 	}
-	
+
 	public double getNextX() {
 		return x + speed * Math.cos(direction);
 	}
@@ -104,7 +105,7 @@ public abstract class GameObject {
 	public double getY() {
 		return y;
 	}
-	
+
 	public double getNextY() {
 		return y + speed * Math.sin(direction);
 	}
@@ -159,7 +160,15 @@ public abstract class GameObject {
 	}
 
 	public boolean nextPosCollision() {
-		return room.inCollision(this, getNextX(), getNextY());
+		return room.inCollision(this, getNextX(), getNextY(), true);
+	}
+
+	public void setSolid(boolean solid) {
+		this.solid = solid;
+	}
+
+	public boolean isSolid() {
+		return solid;
 	}
 
 }

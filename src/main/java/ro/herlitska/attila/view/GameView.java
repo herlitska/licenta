@@ -19,9 +19,9 @@ public interface GameView {
 
 	public void drawRect(double x, double y, double w, double h);
 	
-	public void drawText(String text, double x, double y);
+	public void drawText(String text, double x, double y, double fontSize);
 
-	public void drawinventory(List<InventoryItem> inventory); // drawing the inventory
+	public void drawInventory(List<InventoryItem> inventory, int selectedIndex); // drawing the inventory
 	
 	public void drawHealth(double health);
 	

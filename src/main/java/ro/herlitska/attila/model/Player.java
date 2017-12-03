@@ -14,15 +14,18 @@ import ro.herlitska.attila.util.Utils;
 public class Player extends GameObject {
 
 	private List<InventoryItem> inventory = new ArrayList<>();
+	private int currentItemIndex;
 
 	private String playerName;
-	private double health = 100;
+	private double health = MAX_PLAYER_HEALTH;
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
 	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
 
 	private double mouseX = 0;
 	private double mouseY = 0;
+
+	public static final double MAX_PLAYER_HEALTH = 100;
 
 	public Player(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
@@ -66,20 +69,30 @@ public class Player extends GameObject {
 			break;
 		case D:
 			setX(getX() + 5);
-
 			break;
 		case W:
 			setY(getY() - 5);
-
 			break;
 		case S:
 			setY(getY() + 5);
-
+			break;
+		case NUM_1:
+			currentItemIndex = 0;
+			break;
+		case NUM_2:
+			currentItemIndex = 1;
+			break;
+		case NUM_3:
+			currentItemIndex = 2;
+			break;
+		case NUM_4:
+			currentItemIndex = 3;
 			break;
 		default:
 			break;
 		}
 		setAngle(calcAngleBasedOnMouse());
+		System.out.println(currentItemIndex);
 	}
 
 	@Override
@@ -90,7 +103,7 @@ public class Player extends GameObject {
 
 	@Override
 	public void collisionEvent(GameObject other) {
-		if (other instanceof Zombie && health > 0) {
+		if (other instanceof Zombie && health > 0 && ((Zombie) other).getHealth() > 0) {
 			health -= 0.05;
 		}
 
@@ -104,7 +117,7 @@ public class Player extends GameObject {
 
 	@Override
 	public void drawEvent() {
-		getRoom().getView().drawinventory(inventory);
+		getRoom().getView().drawInventory(inventory, currentItemIndex);
 		getRoom().getView().drawHealth(health);
 	}
 

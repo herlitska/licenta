@@ -7,9 +7,8 @@ import ro.herlitska.attila.util.Utils;
 public class Zombie extends GameObject {
 
 	private double health = 5;
-	private ZombieMotion motion;
 
-	private Player player;
+	private ZombieMotion motion;
 
 	private boolean inCollisionWithPlayer = false;
 
@@ -28,35 +27,30 @@ public class Zombie extends GameObject {
 	public void stepEvent() {
 		super.stepEvent();
 
-		double playerX = getRoom().getPlayerX();
-		double playerY = getRoom().getPlayerY();
-		double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
-		setAngle(angle);
-		setDirection(angle);
+		if (health > 0) {
+			double playerX = getRoom().getPlayerX();
+			double playerY = getRoom().getPlayerY();
+			double angle = calcAngleBasedOnPlayerPos(playerX, playerY);
+			setAngle(angle);
+			setDirection(angle);
 
-		if (!nextPosCollision()) {
-			move();
-		}
+			if (!nextPosCollision()) {
+				move();
+			}
 
-		if (inCollisionWithPlayer && !motion.equals(ZombieMotion.ATTACK)) {
-			motion = ZombieMotion.ATTACK;
-			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.ATTACK));
-		} else if (!inCollisionWithPlayer && motion.equals(ZombieMotion.ATTACK)) {
-			motion = ZombieMotion.RUN;
-			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
-		}
+			if (inCollisionWithPlayer && !motion.equals(ZombieMotion.ATTACK)) {
+				motion = ZombieMotion.ATTACK;
+				setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.ATTACK));
+			} else if (!inCollisionWithPlayer && motion.equals(ZombieMotion.ATTACK)) {
+				motion = ZombieMotion.RUN;
+				setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
+			}
 
-		if (health > 0 && inCollisionWithPlayer) { // my addition
-													// player.getMotion().equals(PlayerMotion.ATTACK))
-			health -= 5;
-		}
-
-		if (health <= 0) { // my
-							// addition
+		} else {
 			motion = ZombieMotion.DEATH;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
 		}
-		System.out.println(health);
+		//System.out.println(health);
 		// System.out.println(player.getMotion().toString());
 		inCollisionWithPlayer = false;
 	}
@@ -65,13 +59,18 @@ public class Zombie extends GameObject {
 	public void collisionEvent(GameObject other) {
 		if (other instanceof Player) {
 			inCollisionWithPlayer = true;
+
+			if (health > 0 && ((Player) other).getMotion().equals(PlayerMotion.ATTACK)) {
+
+				health -= 5;
+			}
 		}
 
 	}
 
 	@Override
 	public void drawEvent() {
-		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50);
+		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50, 20);
 	}
 
 	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {
@@ -89,6 +88,10 @@ public class Zombie extends GameObject {
 			inRads = 2 * Math.PI - inRads;
 
 		return Math.toDegrees(inRads);
+	}
+
+	public double getHealth() {
+		return health;
 	}
 
 }

@@ -1,5 +1,7 @@
 package ro.herlitska.attila.view;
 
+import java.awt.Rectangle;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javassist.expr.Instanceof;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
@@ -24,37 +27,84 @@ import ro.herlitska.attila.model.Player;
 
 public class GameWindow implements GameView {
 
-	private class SpriteToDraw {
-		public final GameSprite sprite;
+	private static final int MIN_DEPTH = -100;
+
+	private abstract class Drawable {
 		public final double x;
 		public final double y;
+
+		public Drawable(double x, double y) {
+			super();
+			this.x = x;
+			this.y = y;
+		}
+
+		public abstract int getDepth();
+
+	}
+
+	private class SpriteToDraw extends Drawable {
+		public final GameSprite sprite;
 		public final double angle;
 
 		public SpriteToDraw(GameSprite sprite, double x, double y, double angle) {
+			super(x, y);
 			this.sprite = sprite;
-			this.x = x;
-			this.y = y;
 			this.angle = angle;
 		}
 
 		public SpriteToDraw(GameSprite sprite, double x, double y) {
-			super();
+			super(x, y);
 			this.sprite = sprite;
-			this.x = x;
-			this.y = y;
 			this.angle = 0;
 		}
+
+		@Override
+		public int getDepth() {
+			return sprite.getDepth();
+		}
 	}
-	
-	private class TextToDraw {
+
+	private class TextToDraw extends Drawable {
 		public final String text;
-		public final double x;
-		public final double y;
-		
-		public TextToDraw(String text, double x, double y) {
+		public final double fontSize;
+
+		public TextToDraw(String text, double x, double y, double fontSize) {
+			super(x, y);
 			this.text = text;
-			this.x = x;
-			this.y = y;
+			this.fontSize = fontSize;
+		}
+
+		@Override
+		public int getDepth() {
+			return MIN_DEPTH;
+		}
+	}
+
+	private class RectangleToDraw extends Drawable {
+		public final double height;
+		public final double width;
+		public final double opacity;
+		public final int depth;
+		public final int rgbRed;
+		public final int rgbGreen;
+		public final int rgbBlue;
+
+		public RectangleToDraw(double x, double y, double height, double width, double opacity, int depth, int rgbRed,
+				int rgbGreen, int rgbBlue) {
+			super(x, y);
+			this.height = height;
+			this.width = width;
+			this.opacity = opacity;
+			this.depth = depth;
+			this.rgbRed = rgbRed;
+			this.rgbGreen = rgbGreen;
+			this.rgbBlue = rgbBlue;
+		}
+
+		@Override
+		public int getDepth() {
+			return depth;
 		}
 	}
 
@@ -65,8 +115,9 @@ public class GameWindow implements GameView {
 	private AnimationTimer gameLoop;
 	private Scene scene;
 
-	private List<SpriteToDraw> spritesToDraw;
+	// private List<SpriteToDraw> spritesToDraw;
 	private List<TextToDraw> textToDraw;
+	private List<Drawable> drawables;
 
 	public GameWindow(GameEventHandler eventHandler) {
 		rootPane = new Group();
@@ -97,6 +148,19 @@ public class GameWindow implements GameView {
 			case D:
 				eventHandler.keyPressed(GameKeyCode.D);
 				break;
+			case DIGIT1:
+				eventHandler.keyPressed(GameKeyCode.NUM_1);
+				break;
+			case DIGIT2:
+				eventHandler.keyPressed(GameKeyCode.NUM_2);
+				break;
+			case DIGIT3:
+				eventHandler.keyPressed(GameKeyCode.NUM_3);
+				break;
+			case DIGIT4:
+				eventHandler.keyPressed(GameKeyCode.NUM_4);
+				break;
+
 			default:
 				break;
 			}
@@ -116,6 +180,18 @@ public class GameWindow implements GameView {
 			case D:
 				eventHandler.keyReleased(GameKeyCode.D);
 				break;
+			case DIGIT1:
+				eventHandler.keyReleased(GameKeyCode.NUM_1);
+				break;
+			case DIGIT2:
+				eventHandler.keyReleased(GameKeyCode.NUM_2);
+				break;
+			case DIGIT3:
+				eventHandler.keyReleased(GameKeyCode.NUM_3);
+				break;
+			case DIGIT4:
+				eventHandler.keyReleased(GameKeyCode.NUM_4);
+				break;
 			default:
 				break;
 			}
@@ -134,10 +210,9 @@ public class GameWindow implements GameView {
 
 	@Override
 	public void preDrawEvent() {
-		spritesToDraw = new ArrayList<>();
+		drawables = new ArrayList<>();
 		textToDraw = new ArrayList<>();
 
-		gc.fillText("text", 200, 300);
 		gc.setFill(Color.GREEN);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -146,24 +221,31 @@ public class GameWindow implements GameView {
 	@Override
 	public void postDrawEvent() {
 
-		Collections.sort(spritesToDraw, (sprite1, sprite2) -> sprite2.sprite.getDepth() - sprite1.sprite.getDepth());
-		spritesToDraw.forEach(sprite -> drawRotatedScaledImage(sprite.sprite.getImage(), sprite.angle, sprite.x,
-				sprite.y, sprite.sprite.getScale()));
-		gc.setFill(Color.WHITE);
-		gc.setFont(new Font(null, 20));
-		gc.fillText(String.valueOf((int) playerHealth), 950, 670);
-
-		for (TextToDraw text : textToDraw) {
-			gc.fillText(text.text, text.x, text.y);
+		Collections.sort(drawables, (d1, d2) -> d2.getDepth() - d1.getDepth());
+		for (Drawable drawable : drawables) {
+			if (drawable instanceof SpriteToDraw) {
+				SpriteToDraw sprite = (SpriteToDraw) drawable;
+				drawRotatedScaledImage(sprite.sprite.getImage(), sprite.angle, sprite.x, sprite.y,
+						sprite.sprite.getScale());
+			} else if (drawable instanceof TextToDraw) {
+				TextToDraw text = (TextToDraw) drawable;
+				gc.setFill(Color.WHITE);
+				gc.setFont(new Font(null, text.fontSize));
+				gc.fillText(text.text, text.x, text.y);
+			} else if (drawable instanceof RectangleToDraw) {
+				RectangleToDraw rectangle = (RectangleToDraw) drawable;
+				gc.setFill(Color.rgb(rectangle.rgbRed, rectangle.rgbGreen, rectangle.rgbBlue, rectangle.opacity));
+				gc.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+			}
 		}
+
 	}
 
 	@Override
 	public void drawObjectSprites(java.util.List<GameObject> objects) {
 		for (GameObject object : objects) {
 			if (object.isVisible()) {
-				spritesToDraw
-						.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(), object.getAngle()));
+				drawables.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(), object.getAngle()));
 
 			}
 		}
@@ -171,7 +253,7 @@ public class GameWindow implements GameView {
 
 	@Override
 	public void draw(GameSprite sprite, double x, double y) {
-		spritesToDraw.add(new SpriteToDraw(sprite, x, y));
+		drawables.add(new SpriteToDraw(sprite, x, y));
 	}
 
 	public Group getRootPane() {
@@ -196,34 +278,40 @@ public class GameWindow implements GameView {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
-	public void drawText(String text, double x, double y) {
-		textToDraw.add(new TextToDraw(text, x, y));
+	public void drawText(String text, double x, double y, double fontSize) {
+		drawables.add(new TextToDraw(text, x, y, fontSize));
 	}
 
 	@Override
-	public void drawinventory(List<InventoryItem> inventory) {
+	public void drawInventory(List<InventoryItem> inventory, int selectedIndex) {
 
 		for (int i = 0; i < inventory.size(); i++) {
-			spritesToDraw.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
+			drawables.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
 		}
 
 		for (int i = 0; i < 4; i++) {
-			GameSprite invBackround = new GameSprite(Arrays.asList("/inventory_background.png"));
-			invBackround.setDepth(-99);
-			spritesToDraw.add(new SpriteToDraw(invBackround, 110 + i * 150, 650));
+			drawables.add(new RectangleToDraw(46 + i * 150, 586, 128, 128, selectedIndex == i ? 0.8 : 0.4,
+					MIN_DEPTH + 1, 255, 255, 255));
 		}
-
 	}
 
 	@Override
 	public void drawHealth(double health) {
 		playerHealth = health;
-		GameSprite sprite = GameSpriteFactory.getHealthSprite();
-		sprite.setImage((int) (health * 0.1));
-		sprite.setDepth(-100);
-		spritesToDraw.add(new SpriteToDraw(sprite, 800, 700));
+
+		drawables.add(new RectangleToDraw(610, 20, 40, 380, 0.2, MIN_DEPTH + 1, 255, 255, 255));
+		drawables
+				.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
+						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+								* (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
+								: 255),
+						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+								: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
+						0));
+
+		drawables.add(new TextToDraw(String.valueOf((int) playerHealth), 570, 50, 20));
 	}
 
 	public Scene getScene() {
