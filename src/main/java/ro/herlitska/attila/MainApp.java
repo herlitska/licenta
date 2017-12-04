@@ -27,18 +27,18 @@ public class MainApp extends Application {
 
 		Player player = new Player(500, 500);
 		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "kitchen_knife_by_ashmo.png",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE), WeaponType.KNIFE);
 		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "kitchen_knife_by_ashmo.png",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE), WeaponType.KNIFE);
 
 		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat3",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+				GameSpriteFactory.getWeaponSprite(WeaponType.PISTOL), WeaponType.PISTOL);
 
 		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat4",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+				GameSpriteFactory.getWeaponSprite(WeaponType.RIFLE), WeaponType.RIFLE);
 
 		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Baseball Bat5",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE));
+				GameSpriteFactory.getWeaponSprite(WeaponType.SHOTGUN), WeaponType.SHOTGUN);
 
 		Zombie zombie = new Zombie(1000, 100);
 		Zombie zombie2 = new Zombie(20, 300);

@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerWeapon;
+import ro.herlitska.attila.model.GameSpriteFactory.WeaponType;
 import ro.herlitska.attila.util.Utils;
 
 public class Player extends GameObject {
@@ -109,7 +110,9 @@ public class Player extends GameObject {
 
 		if (other instanceof WeaponObject && inventory.size() < 4) {
 			inventory.add(new WeaponItem(((WeaponObject) other).getName(), ((WeaponObject) other).getDamage(),
-					((WeaponObject) other).getDurability(), other.getSprite()));
+					((WeaponObject) other).getDurability(),
+					GameSpriteFactory.getInventorySprite(((WeaponObject) other).getWeaponType())));
+
 			other.destroy();
 		}
 

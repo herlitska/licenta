@@ -15,7 +15,7 @@ public class GameSpriteFactory {
 	}
 
 	public enum PlayerWeapon {
-		KNIFE
+		KNIFE, PISTOL, RIFLE, SHOTGUN
 	}
 
 	public enum ZombieMotion {
@@ -60,6 +60,8 @@ public class GameSpriteFactory {
 	private static Map<ZombieMotion, GameSprite> zombieSprites = new HashMap<>();
 
 	private static Map<WeaponType, GameSprite> weaponSprites = new HashMap<>();
+
+	private static Map<WeaponType, GameSprite> inventorySprites = new HashMap<>();
 
 	private static GameSprite healthSprite;
 
@@ -169,7 +171,16 @@ public class GameSpriteFactory {
 			GameSprite sprite = null;
 			switch (weaponType) {
 			case KNIFE:
-				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo.png"));
+				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo_glow.png"));
+				break;
+			case PISTOL:
+				sprite = new GameSprite(Arrays.asList("/smith_and_wesson_41_by_ashmo_glow.png"));
+				break;
+			case RIFLE:
+				sprite = new GameSprite(Arrays.asList("/stg_44_or_mp43_by_ashmo_glow.png"));
+				break;
+			case SHOTGUN:
+				sprite = new GameSprite(Arrays.asList("/mag7_by_ashmo_glow.png"));
 				break;
 
 			default:
@@ -182,4 +193,35 @@ public class GameSpriteFactory {
 		}
 
 	}
+
+	public static GameSprite getInventorySprite(WeaponType weaponType) {
+		if (inventorySprites.containsKey(weaponType)) {
+			return inventorySprites.get(weaponType);
+		} else {
+			GameSprite sprite = null;
+			switch (weaponType) {
+			case KNIFE:
+				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo_ silhouette.png"));
+				break;
+			case PISTOL:
+				sprite = new GameSprite(Arrays.asList("/smith_and_wesson_41_by_ashmo_silhouette.png"));
+				break;
+			case RIFLE:
+				sprite = new GameSprite(Arrays.asList("/stg_44_or_mp43_by_ashmo_silhouette.png"));
+				break;
+			case SHOTGUN:
+				sprite = new GameSprite(Arrays.asList("/mag7_by_ashmo_silhouette.png"));
+				break;
+
+			default:
+				break;
+			}
+			sprite.setScale(0.6);
+			sprite.setDepth(100);
+			inventorySprites.put(weaponType, sprite);
+			return sprite;
+		}
+
+	}
+
 }
