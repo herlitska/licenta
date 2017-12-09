@@ -10,7 +10,7 @@ public interface GameEventHandler {
 
 	public void mouseMoved(double mouseX, double mouseY);
 
-	public void mouseClicked(MouseButton button); // my addition
+	public void mouseClicked(MouseButton button, double x, double y); // my addition
 
 	public void step();
 }

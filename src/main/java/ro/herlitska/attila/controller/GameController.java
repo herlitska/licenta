@@ -78,10 +78,11 @@ public class GameController implements GameEventHandler {
 		}
 
 		if (mouseClicked) {
-
-			room.mouseClickedEvent(button);
+			room.mouseClickedEvent(button, mouseX, mouseY);
 			mouseClicked = false;
 		}
+		
+		room.endOfStepEvent();
 	}
 
 	public void setRoom(GameRoom room) {
@@ -89,9 +90,11 @@ public class GameController implements GameEventHandler {
 	}
 
 	@Override
-	public void mouseClicked(MouseButton button) { // my addition
+	public void mouseClicked(MouseButton button, double x, double y) { // my addition
 		mouseClicked = true;
 		this.button = button;
+		this.mouseX = x;
+		this.mouseY = y;
 
 	}
 }

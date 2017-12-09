@@ -74,7 +74,7 @@ public class Zombie extends GameObject {
 
 	@Override
 	public void drawEvent() {
-		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50, 20);
+//		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50, 20);
 	}
 
 	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {

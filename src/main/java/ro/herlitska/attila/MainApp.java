@@ -7,11 +7,10 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import ro.herlitska.attila.controller.GameController;
 import ro.herlitska.attila.model.GameRoom;
-import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.GameSpriteFactory;
-import ro.herlitska.attila.model.GameSpriteFactory.WeaponType;
 import ro.herlitska.attila.model.Player;
 import ro.herlitska.attila.model.WeaponObject;
+import ro.herlitska.attila.model.WeaponType;
 import ro.herlitska.attila.model.Zombie;
 import ro.herlitska.attila.view.GameWindow;
 
@@ -42,7 +41,8 @@ public class MainApp extends Application {
 
 		Zombie zombie = new Zombie(1000, 100);
 		Zombie zombie2 = new Zombie(20, 300);
-
+		
+		
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr);
 
@@ -54,6 +54,7 @@ public class MainApp extends Application {
 
 		player.setRoom(room);
 		weapon.setRoom(room);
+		
 		weapon.setSolid(false);
 		weapon2.setSolid(false);
 		weapon3.setSolid(false);

@@ -28,6 +28,6 @@ public interface GameView {
 
 	public void drawHealth(double health);
 
-	public void drawBullet(List<Bullet> bullets);
+
 
 }

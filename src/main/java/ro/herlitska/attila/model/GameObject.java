@@ -75,7 +75,7 @@ public abstract class GameObject {
 
 	}
 
-	public void mouseClickedEvent(MouseButton button) { // my addition
+	public void mouseClickedEvent(MouseButton button, double x, double y) { // my addition
 
 	}
 
@@ -91,7 +91,7 @@ public abstract class GameObject {
 	}
 
 	public double getNextX() {
-		return x + speed * Math.cos(direction);
+		return x + speed * Math.cos(Math.toRadians(direction));
 	}
 
 	public int getId() {
@@ -107,7 +107,7 @@ public abstract class GameObject {
 	}
 
 	public double getNextY() {
-		return y + speed * Math.sin(direction);
+		return y + speed * Math.sin(Math.toRadians(direction));
 	}
 
 	public void setY(double y) {

@@ -1,7 +1,5 @@
 package ro.herlitska.attila.model;
 
-import ro.herlitska.attila.model.GameSpriteFactory.WeaponType;
-
 public class WeaponObject extends GameObject {
 
 	private String name;
