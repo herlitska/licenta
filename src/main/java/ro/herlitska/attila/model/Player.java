@@ -15,13 +15,15 @@ import ro.herlitska.attila.util.Utils;
 public class Player extends GameObject {
 
 	private List<InventoryItem> inventory = new ArrayList<>();
+	private List<Bullet> bullets = new ArrayList<>(); // my addition
 	private int currentItemIndex;
 
 	private String playerName;
 	private double health = MAX_PLAYER_HEALTH;
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
-	private PlayerWeapon weapon = PlayerWeapon.KNIFE;
+	// private PlayerWeapon weapon = PlayerWeapon.KNIFE;
+	private PlayerWeapon weapon = PlayerWeapon.HANDGUN;
 
 	private double mouseX = 0;
 	private double mouseY = 0;
@@ -33,7 +35,7 @@ public class Player extends GameObject {
 	}
 
 	public Player(double x, double y) {
-		super(x, y, GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, PlayerWeapon.KNIFE));
+		super(x, y, GameSpriteFactory.getPlayerSprite(PlayerMotion.IDLE, PlayerWeapon.HANDGUN));
 		getSprite().setAnimationSpeed(2);
 	}
 
@@ -122,6 +124,7 @@ public class Player extends GameObject {
 	public void drawEvent() {
 		getRoom().getView().drawInventory(inventory, currentItemIndex);
 		getRoom().getView().drawHealth(health);
+		getRoom().getView().drawBullet(bullets); // addition
 	}
 
 	@Override
@@ -135,9 +138,16 @@ public class Player extends GameObject {
 	public void mouseClickedEvent(MouseButton button) { // my addition
 		if (button.equals(MouseButton.PRIMARY)) {
 			motion = PlayerMotion.ATTACK;
-			setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK, weapon));
+			// setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK,
+			// weapon));
+			if (weapon == PlayerWeapon.HANDGUN || weapon == PlayerWeapon.RIFLE || weapon == PlayerWeapon.SHOTGUN) {
+				Bullet bullet = new Bullet(getRoom().getPlayerX(), getRoom().getPlayerY(),
+						GameSpriteFactory.getBulletSprite(), true); // addition
+				bullets.add(bullet);
+			}
 		}
 		System.out.println("player mouse clicked event");
+
 	}
 
 	private double calcAngleBasedOnMouse() {

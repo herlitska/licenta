@@ -15,7 +15,7 @@ public class GameSpriteFactory {
 	}
 
 	public enum PlayerWeapon {
-		KNIFE, PISTOL, RIFLE, SHOTGUN
+		KNIFE, HANDGUN, RIFLE, SHOTGUN
 	}
 
 	public enum ZombieMotion {
@@ -23,7 +23,7 @@ public class GameSpriteFactory {
 	}
 
 	public enum WeaponType {
-		KNIFE, PISTOL, RIFLE, SHOTGUN
+		KNIFE, HANDGUN, RIFLE, SHOTGUN
 	}
 
 	private static final double ZOMBIE_RADIUS = 25;
@@ -173,7 +173,7 @@ public class GameSpriteFactory {
 			case KNIFE:
 				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo_glow.png"));
 				break;
-			case PISTOL:
+			case HANDGUN:
 				sprite = new GameSprite(Arrays.asList("/smith_and_wesson_41_by_ashmo_glow.png"));
 				break;
 			case RIFLE:
@@ -203,7 +203,7 @@ public class GameSpriteFactory {
 			case KNIFE:
 				sprite = new GameSprite(Arrays.asList("/kitchen_knife_by_ashmo_ silhouette.png"));
 				break;
-			case PISTOL:
+			case HANDGUN:
 				sprite = new GameSprite(Arrays.asList("/smith_and_wesson_41_by_ashmo_silhouette.png"));
 				break;
 			case RIFLE:
@@ -222,6 +222,12 @@ public class GameSpriteFactory {
 			return sprite;
 		}
 
+	}
+
+	public static GameSprite getBulletSprite() { // my addition
+		GameSprite sprite = null;
+		sprite = new GameSprite(Arrays.asList("/Bullet_12x3.png"));
+		return sprite;
 	}
 
 }

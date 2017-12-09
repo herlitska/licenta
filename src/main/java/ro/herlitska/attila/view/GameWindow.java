@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.id.CompositeNestedGeneratedValueGenerator.GenerationPlan;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -17,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javassist.expr.Instanceof;
+import ro.herlitska.attila.model.Bullet;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
@@ -316,6 +319,19 @@ public class GameWindow implements GameView {
 
 	public Scene getScene() {
 		return scene;
+	}
+
+	@Override
+	public void drawBullet(List<Bullet> bullets) { // my addition
+
+		for (int i = 0; i < bullets.size(); i++) {
+			if (bullets.get(i).isVisible()) {
+				drawables.add(new SpriteToDraw(bullets.get(i).getSprite(), 500 + i * 20, 550));
+			} else {
+				bullets.remove(i);
+			}
+		}
+
 	}
 
 	/**

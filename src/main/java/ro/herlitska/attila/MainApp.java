@@ -32,7 +32,7 @@ public class MainApp extends Application {
 				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE), WeaponType.KNIFE);
 
 		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Baseball Bat3",
-				GameSpriteFactory.getWeaponSprite(WeaponType.PISTOL), WeaponType.PISTOL);
+				GameSpriteFactory.getWeaponSprite(WeaponType.HANDGUN), WeaponType.HANDGUN);
 
 		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Baseball Bat4",
 				GameSpriteFactory.getWeaponSprite(WeaponType.RIFLE), WeaponType.RIFLE);

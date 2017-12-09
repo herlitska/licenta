@@ -50,7 +50,7 @@ public class Zombie extends GameObject {
 			motion = ZombieMotion.DEATH;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
 		}
-		//System.out.println(health);
+		// System.out.println(health);
 		// System.out.println(player.getMotion().toString());
 		inCollisionWithPlayer = false;
 	}
@@ -64,6 +64,10 @@ public class Zombie extends GameObject {
 
 				health -= 5;
 			}
+		}
+
+		if (other instanceof Bullet) { // my adition
+
 		}
 
 	}
