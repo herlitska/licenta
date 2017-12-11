@@ -49,32 +49,38 @@ public class Zombie extends GameObject {
 		} else {
 			motion = ZombieMotion.DEATH;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
+			setSolid(false);
 		}
 		// System.out.println(health);
 		// System.out.println(player.getMotion().toString());
 		inCollisionWithPlayer = false;
+
 	}
 
 	@Override
 	public void collisionEvent(GameObject other) {
 		if (other instanceof Player) {
 			inCollisionWithPlayer = true;
-
 			if (health > 0 && ((Player) other).getMotion().equals(PlayerMotion.ATTACK)) {
-
 				health -= 5;
 			}
 		}
 
-		if (other instanceof Bullet) { // my adition
+		if (other instanceof Bullet) { // addition
+			if (health > 0) {
+				health -= 5;
 
+			}
+
+			other.destroy();
 		}
 
 	}
 
 	@Override
 	public void drawEvent() {
-//		getRoom().getView().drawText(String.valueOf(getDirection()), getX() - 50, getY() - 50, 20);
+		// getRoom().getView().drawText(String.valueOf(getDirection()), getX() -
+		// 50, getY() - 50, 20);
 	}
 
 	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {

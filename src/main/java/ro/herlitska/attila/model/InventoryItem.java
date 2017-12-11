@@ -18,5 +18,9 @@ public class InventoryItem {
     public GameSprite getSprite() {
         return sprite;
     }
+    
+    public void stepEvent(){
+    	
+    }
 
 }

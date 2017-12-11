@@ -31,6 +31,7 @@ import ro.herlitska.attila.model.Player;
 public class GameWindow implements GameView {
 
 	public static final int MIN_DEPTH = -100;
+	public static final int MAX_DEPTH = 100;
 
 	private abstract class Drawable {
 		public final double x;
@@ -205,7 +206,7 @@ public class GameWindow implements GameView {
 		// canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
 
 		scene.setOnMousePressed(e -> {
-			eventHandler.mouseClicked(e.getButton(),e.getSceneX(),e.getSceneY());
+			eventHandler.mouseClicked(e.getButton(), e.getSceneX(), e.getSceneY());
 			System.out.println(e.getButton());
 		});
 
@@ -291,7 +292,9 @@ public class GameWindow implements GameView {
 	public void drawInventory(List<InventoryItem> inventory, int selectedIndex) {
 
 		for (int i = 0; i < inventory.size(); i++) {
-			drawables.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
+			if (inventory.get(i) != null) {
+				drawables.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
+			}
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -320,8 +323,6 @@ public class GameWindow implements GameView {
 	public Scene getScene() {
 		return scene;
 	}
-
-	
 
 	/**
 	 * Sets the transform for the GraphicsContext to rotate around a pivot
