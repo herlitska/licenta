@@ -126,7 +126,22 @@ public class Player extends GameObject {
 					inventory.set(i,
 							new WeaponItem(weaponObject.getName(), weaponObject.getWeaponType(),
 									weaponObject.getDamage(), weaponObject.getDurability(),
-									GameSpriteFactory.getInventorySprite(weaponObject.getWeaponType())));
+									GameSpriteFactory.getInventoryWeaponSprite(weaponObject.getWeaponType())));
+					other.destroy();
+					break;
+				}
+			}
+
+		}
+
+		if (other instanceof HealthObject) {
+			HealthObject healthObject = (HealthObject) other;
+			for (int i = 0; i < inventory.size(); i++) {
+				if (inventory.get(i) == null) {
+					inventory.set(i,
+							new HealthItem(healthObject.getName(), healthObject.getHealthRegained(),
+									healthObject.getHealthType(),
+									GameSpriteFactory.getInventoryHealthSprite(healthObject.getHealthType())));
 					other.destroy();
 					break;
 				}
@@ -168,6 +183,16 @@ public class Player extends GameObject {
 					bullet.setAngle(getAngle());
 					bullet.setRoom(getRoom());
 
+				}
+			}
+
+			if (!inventory.isEmpty() && inventory.get(currentItemIndex) instanceof HealthItem) { // addition
+				HealthItem healthItem = (HealthItem) inventory.get(currentItemIndex);
+				setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK, WeaponType.KNIFE));
+				if (health < MAX_PLAYER_HEALTH) {
+					health += healthItem.getHealthRegained(); // mi van ha az elet visznyeres nagyobb lesz mint max_player_health
+					inventory.remove(currentItemIndex);
+					inventory.add(null);
 				}
 			}
 		}

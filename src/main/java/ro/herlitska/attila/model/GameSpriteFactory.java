@@ -56,7 +56,11 @@ public class GameSpriteFactory {
 
 	private static Map<WeaponType, GameSprite> weaponSprites = new HashMap<>();
 
-	private static Map<WeaponType, GameSprite> inventorySprites = new HashMap<>();
+	private static Map<WeaponType, GameSprite> inventoryWeaponSprites = new HashMap<>();
+
+	private static Map<HealthType, GameSprite> inventoryHealthSprites = new HashMap<>(); // addition
+
+	private static Map<HealthType, GameSprite> healthItemSprites = new HashMap<>(); // addition
 
 	private static GameSprite healthSprite;
 
@@ -192,9 +196,39 @@ public class GameSpriteFactory {
 
 	}
 
-	public static GameSprite getInventorySprite(WeaponType weaponType) {
-		if (inventorySprites.containsKey(weaponType)) {
-			return inventorySprites.get(weaponType);
+	public static GameSprite getHealthSprite(HealthType healthType) {
+		if (healthItemSprites.containsKey(healthType)) {
+			return healthItemSprites.get(healthType);
+		} else {
+			GameSprite sprite = null;
+			switch (healthType) {
+			case SURVIVALBAR:
+				sprite = new GameSprite(Arrays.asList("/item_survivalbar.png"));
+				break;
+			case MEAT:
+				sprite = new GameSprite(Arrays.asList("/item_meat.png"));
+				break;
+			case HOTDOG:
+				sprite = new GameSprite(Arrays.asList("/item_hotdog.png"));
+				break;
+			case RATIONS:
+				sprite = new GameSprite(Arrays.asList("/item_ration.png"));
+				break;
+
+			default:
+				break;
+			}
+			sprite.setScale(0.5);
+			sprite.setDepth(100);
+			healthItemSprites.put(healthType, sprite);
+			return sprite;
+		}
+
+	}
+
+	public static GameSprite getInventoryWeaponSprite(WeaponType weaponType) {
+		if (inventoryWeaponSprites.containsKey(weaponType)) {
+			return inventoryWeaponSprites.get(weaponType);
 		} else {
 			GameSprite sprite = null;
 			switch (weaponType) {
@@ -216,7 +250,37 @@ public class GameSpriteFactory {
 			}
 			sprite.setScale(0.6);
 			sprite.setDepth(100);
-			inventorySprites.put(weaponType, sprite);
+			inventoryWeaponSprites.put(weaponType, sprite);
+			return sprite;
+		}
+
+	}
+
+	public static GameSprite getInventoryHealthSprite(HealthType healthType) {
+		if (inventoryHealthSprites.containsKey(healthType)) {
+			return inventoryHealthSprites.get(healthType);
+		} else {
+			GameSprite sprite = null;
+			switch (healthType) {
+			case SURVIVALBAR:
+				sprite = new GameSprite(Arrays.asList("/item_survivalbar_silhouette.png"));
+				break;
+			case HOTDOG:
+				sprite = new GameSprite(Arrays.asList("/item_hotdog_silhouette.png"));
+				break;
+			case MEAT:
+				sprite = new GameSprite(Arrays.asList("/item_meat_silhouette.png"));
+				break;
+			case RATIONS:
+				sprite = new GameSprite(Arrays.asList("/item_ration_silhouette.png"));
+				break;
+
+			default:
+				break;
+			}
+			sprite.setScale(0.6);
+			sprite.setDepth(100);
+			inventoryHealthSprites.put(healthType, sprite);
 			return sprite;
 		}
 
