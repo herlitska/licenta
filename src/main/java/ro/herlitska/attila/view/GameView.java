@@ -7,6 +7,7 @@ import ro.herlitska.attila.model.Bullet;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.InventoryItem;
+import ro.herlitska.attila.model.WeaponItem;
 
 public interface GameView {
 
@@ -28,6 +29,6 @@ public interface GameView {
 
 	public void drawHealth(double health);
 
-
+	
 
 }

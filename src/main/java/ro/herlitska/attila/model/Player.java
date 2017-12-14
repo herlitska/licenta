@@ -3,6 +3,8 @@ package ro.herlitska.attila.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
 import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
 
@@ -157,6 +159,7 @@ public class Player extends GameObject {
 		getRoom().getView().drawHealth(health);
 		// getRoom().getView().drawText(String.valueOf(getAngle()), getX() - 50,
 		// getY() - 50, 20);
+
 	}
 
 	@Override
@@ -184,15 +187,23 @@ public class Player extends GameObject {
 					bullet.setRoom(getRoom());
 
 				}
+
 			}
 
 			if (!inventory.isEmpty() && inventory.get(currentItemIndex) instanceof HealthItem) { // addition
 				HealthItem healthItem = (HealthItem) inventory.get(currentItemIndex);
 				setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK, WeaponType.KNIFE));
 				if (health < MAX_PLAYER_HEALTH) {
-					health += healthItem.getHealthRegained(); // mi van ha az elet visznyeres nagyobb lesz mint max_player_health
-					inventory.remove(currentItemIndex);
-					inventory.add(null);
+					if (((health += healthItem.getHealthRegained()) > MAX_PLAYER_HEALTH)) {
+						health = MAX_PLAYER_HEALTH;
+						inventory.remove(currentItemIndex);
+						System.out.println("Rgained" + " " + healthItem.getHealthRegained() + " " + "health");
+						inventory.add(null);
+					} else {
+						health += healthItem.getHealthRegained();
+						inventory.remove(currentItemIndex);
+						inventory.add(null);
+					}
 				}
 			}
 		}

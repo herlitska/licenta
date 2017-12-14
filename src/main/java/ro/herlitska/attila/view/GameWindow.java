@@ -28,6 +28,7 @@ import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
 
+
 public class GameWindow implements GameView {
 
 	public static final int MIN_DEPTH = -100;
