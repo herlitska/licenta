@@ -176,18 +176,7 @@ public class Player extends GameObject {
 				WeaponItem weaponItem = (WeaponItem) inventory.get(currentItemIndex);
 				motion = PlayerMotion.ATTACK;
 				setSprite(GameSpriteFactory.getPlayerSprite(PlayerMotion.ATTACK, weapon));
-				if ((weapon == WeaponType.HANDGUN || weapon == WeaponType.RIFLE || weapon == WeaponType.SHOTGUN)
-						&& weaponItem.canShoot()) {
-					Bullet bullet = new Bullet(getX(), getY(), GameSpriteFactory.getBulletSprite(),
-							weaponItem.getDamage());
-					getRoom().createObject(bullet);
-					weaponItem.resetDelayCounter();
-					bullet.setDirection(getAngle());
-					bullet.setAngle(getAngle());
-					bullet.setRoom(getRoom());
-
-				}
-
+				weaponItem.attack(getX(), getY(), getAngle(), getRoom());
 			}
 
 			if (!inventory.isEmpty() && inventory.get(currentItemIndex) instanceof HealthItem) { // addition
@@ -196,14 +185,12 @@ public class Player extends GameObject {
 				if (health < MAX_PLAYER_HEALTH) {
 					if (((health += healthItem.getHealthRegained()) > MAX_PLAYER_HEALTH)) {
 						health = MAX_PLAYER_HEALTH;
-						inventory.remove(currentItemIndex);
-						System.out.println("Rgained" + " " + healthItem.getHealthRegained() + " " + "health");
-						inventory.add(null);
+						inventory.remove(currentItemIndex);						
+						System.out.println("Regained" + " " + healthItem.getHealthRegained() + " " + "health");						
 					} else {
-						health += healthItem.getHealthRegained();
 						inventory.remove(currentItemIndex);
-						inventory.add(null);
 					}
+					inventory.add(null);
 				}
 			}
 		}

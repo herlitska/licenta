@@ -1,6 +1,6 @@
 package ro.herlitska.attila.model;
 
-public class InventoryItem {
+public abstract class InventoryItem {
 
     private String name;
     private GameSprite sprite;
@@ -19,8 +19,5 @@ public class InventoryItem {
         return sprite;
     }
     
-    public void stepEvent(){
-    	
-    }
-
+    public abstract void stepEvent();
 }
