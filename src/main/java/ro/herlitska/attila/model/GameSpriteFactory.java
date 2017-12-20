@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import ro.herlitska.attila.model.weapon.WeaponType;
 import ro.herlitska.attila.view.GameWindow;
 
 public class GameSpriteFactory {
@@ -20,9 +21,9 @@ public class GameSpriteFactory {
 		ATTACK, ATTACK01, ATTACK02, ATTACK03, IDLE, RUN, WALK, DEATH, DEATH01, DEATH02
 	}
 
-	private static final double ZOMBIE_RADIUS = 25;
-	private static final double PLAYER_RADIUS = 78;
-	private static final double BULLET_RADIUS = 5;
+	public static final double ZOMBIE_RADIUS = 25;
+	public static final double PLAYER_RADIUS = 78;
+	public static final double BULLET_RADIUS = 5;
 
 	private static class PlayerSpriteSearchKey {
 		public final PlayerMotion motion;

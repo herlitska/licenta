@@ -1,4 +1,4 @@
-package ro.herlitska.attila.model;
+package ro.herlitska.attila.model.weapon;
 
 public class WeaponProperties {
 

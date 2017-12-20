@@ -7,8 +7,11 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
+import ro.herlitska.attila.model.weapon.WeaponItem;
+import ro.herlitska.attila.model.weapon.WeaponObject;
+import ro.herlitska.attila.model.weapon.WeaponType;
 
-public class Player extends GameObject {
+public class Player extends GameObject implements Damagable, DamageInflicter {
 
 	private List<InventoryItem> inventory;
 
@@ -196,6 +199,24 @@ public class Player extends GameObject {
 		}
 		System.out.println("player mouse clicked event");
 
+	}
+	
+	@Override
+	public double getHealth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public void damage(double damage) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public double getAttackRange() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	private double calcAngleBasedOnMouse() {

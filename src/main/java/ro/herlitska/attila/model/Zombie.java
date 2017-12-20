@@ -2,9 +2,10 @@ package ro.herlitska.attila.model;
 
 import ro.herlitska.attila.model.GameSpriteFactory.PlayerMotion;
 import ro.herlitska.attila.model.GameSpriteFactory.ZombieMotion;
+import ro.herlitska.attila.model.weapon.Bullet;
 import ro.herlitska.attila.util.Utils;
 
-public class Zombie extends GameObject {
+public class Zombie extends GameObject implements Damagable, DamageInflicter {
 
 	private double health = 5;
 
@@ -81,6 +82,18 @@ public class Zombie extends GameObject {
 	public void drawEvent() {
 		// getRoom().getView().drawText(String.valueOf(getDirection()), getX() -
 		// 50, getY() - 50, 20);
+	}
+	
+	@Override
+	public double getAttackRange() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void damage(double damage) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private double calcAngleBasedOnPlayerPos(double playerX, double playerY) {

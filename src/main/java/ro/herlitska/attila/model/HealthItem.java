@@ -24,4 +24,9 @@ public class HealthItem extends InventoryItem {
 		return healthType;
 	}
 
+	@Override
+	public void stepEvent() {
+		
+	}
+
 }

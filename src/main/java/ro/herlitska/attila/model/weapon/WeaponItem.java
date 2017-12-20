@@ -1,4 +1,7 @@
-package ro.herlitska.attila.model;
+package ro.herlitska.attila.model.weapon;
+
+import ro.herlitska.attila.model.GameSpriteFactory;
+import ro.herlitska.attila.model.InventoryItem;
 
 public class WeaponItem extends InventoryItem {
 
@@ -27,6 +30,18 @@ public class WeaponItem extends InventoryItem {
 		return properties;
 	}
 
+	public int getRemainingDurability() {
+		return remainingDurability;
+	}
+	
+	protected void decreaseDurability() {
+		remainingDurability--;
+	}
+	
+	protected void resetAttackDelayCounter() {
+		attackDelayCounter = 0;
+	}
+
 	@Override
 	public void stepEvent() {
 		attackDelayCounter++;
@@ -35,18 +50,5 @@ public class WeaponItem extends InventoryItem {
 	public boolean canAttack() {
 		return attackDelayCounter >= properties.getAttackDelay();
 	}
-
-	public void attack(double x, double y, double angle, GameRoom room) {
-		if (canAttack()) {
-			
-		}
-		if (ballisticWeapon && canAttack()) {
-			attackDelayCounter = 0;			
-			Bullet bullet = new Bullet(x, y, GameSpriteFactory.getBulletSprite(), damage);
-			bullet.setDirection(angle);
-			bullet.setAngle(angle);
-			bullet.setRoom(room);
-			room.createObject(bullet);
-		}
-	}
+	
 }

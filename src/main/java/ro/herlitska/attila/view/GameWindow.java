@@ -19,7 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javassist.expr.Instanceof;
-import ro.herlitska.attila.model.Bullet;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
@@ -27,6 +26,7 @@ import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
+import ro.herlitska.attila.model.weapon.Bullet;
 
 
 public class GameWindow implements GameView {

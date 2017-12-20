@@ -11,9 +11,9 @@ import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.HealthObject;
 import ro.herlitska.attila.model.HealthType;
 import ro.herlitska.attila.model.Player;
-import ro.herlitska.attila.model.WeaponObject;
-import ro.herlitska.attila.model.WeaponType;
 import ro.herlitska.attila.model.Zombie;
+import ro.herlitska.attila.model.weapon.WeaponObject;
+import ro.herlitska.attila.model.weapon.WeaponType;
 import ro.herlitska.attila.view.GameWindow;
 
 public class MainApp extends Application {

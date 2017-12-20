@@ -1,4 +1,7 @@
-package ro.herlitska.attila.model;
+package ro.herlitska.attila.model.weapon;
+
+import ro.herlitska.attila.model.GameObject;
+import ro.herlitska.attila.model.GameSpriteFactory;
 
 public class WeaponObject extends GameObject {
 
