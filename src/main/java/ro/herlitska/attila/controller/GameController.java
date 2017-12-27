@@ -68,6 +68,8 @@ public class GameController implements GameEventHandler {
 
 		// collision
 		room.checkCollision();
+		
+		room.checkAttackRange();
 
 		// draw
 		room.drawEvent();

@@ -141,6 +141,9 @@ public class GameSpriteFactory {
 				sprite.setRepeatable(false);
 				sprite.setDepth(GameWindow.MAX_DEPTH);
 			}
+			if (motion == ZombieMotion.ATTACK) {
+			    sprite.setAnimationSpeed(5);
+			}
 			return sprite;
 		}
 

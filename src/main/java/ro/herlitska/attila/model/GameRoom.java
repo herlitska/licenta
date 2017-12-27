@@ -49,10 +49,11 @@ public class GameRoom {
     public void stepEvent() {
         objects.forEach(GameObject::stepEvent);
     }
-    
-    public void endOfStepEvent(){
+
+    public void endOfStepEvent() {
         objects.addAll(objectsToCreate);
         objectsToCreate.clear();
+        objects.forEach(GameObject::endOfStepEvent);
     }
 
     public void drawEvent() {
@@ -77,7 +78,7 @@ public class GameRoom {
     public void mouseClickedEvent(MouseButton button, double x, double y) {
         System.out.println("Game Room mouse clicked");
         System.out.println(button);
-        objects.forEach(object -> object.mouseClickedEvent(button,x,y));
+        objects.forEach(object -> object.mouseClickedEvent(button, x, y));
     }
 
     public void keyReleasedEvent(GameKeyCode key) {
@@ -147,6 +148,23 @@ public class GameRoom {
                 y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
                         + other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale()
                 && !object.equals(other) && (!onlySolid || (object.isSolid() && other.isSolid()));
+    }
+
+    public void checkAttackRange() {
+        for (GameObject attacker : objects) {
+            if (attacker instanceof DamageInflicter && ((DamageInflicter) attacker).getAttackRange() != -1) {
+                for (GameObject damagable : objects) {
+                    if (damagable instanceof Damagable) {
+                        if (Utils.dist(attacker.getX(), attacker.getY(), damagable.getX(),
+                                damagable.getY()) < ((DamageInflicter) attacker).getAttackRange()
+                                        + damagable.getSprite().getBoundingCircleRadius()
+                                && !attacker.equals(damagable)) {
+                            ((DamageInflicter) attacker).inAttackRangeEvent((Damagable) damagable);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

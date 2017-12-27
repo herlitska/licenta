@@ -8,16 +8,17 @@ public class WeaponItem extends InventoryItem {
 	private WeaponProperties properties;
 	
 	private int remainingDurability;
-	private int attackDelayCounter = 0;	
+	private int attackDelayCounter;	
 	
 	public static WeaponItem createWeaponItem(WeaponProperties properties) {
 		WeaponItem weaponItem;
-		if (properties.getWeaponType() == WeaponType.HANDGUN) {
+		if (properties.getWeaponType() == WeaponType.KNIFE) {
 			weaponItem = new MeleeWeaponItem(properties);
 		} else {
 			weaponItem = new BallisticWeaponItem(properties);
 		}
 		weaponItem.remainingDurability = properties.getDurability();
+		weaponItem.attackDelayCounter = properties.getAttackDelay();
 		return weaponItem;
 	}
 	
@@ -35,7 +36,9 @@ public class WeaponItem extends InventoryItem {
 	}
 	
 	protected void decreaseDurability() {
-		remainingDurability--;
+		if (remainingDurability > 0) {
+		    remainingDurability--;
+		}
 	}
 	
 	protected void resetAttackDelayCounter() {

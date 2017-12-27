@@ -1,13 +1,10 @@
 package ro.herlitska.attila.view;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.InventoryItem;
-import ro.herlitska.attila.model.weapon.Bullet;
-import ro.herlitska.attila.model.weapon.WeaponItem;
 
 public interface GameView {
 

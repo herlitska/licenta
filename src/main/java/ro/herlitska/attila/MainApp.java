@@ -27,19 +27,11 @@ public class MainApp extends Application {
 		this.primaryStage = primaryStage;
 
 		Player player = new Player(500, 500);
-		WeaponObject weapon = new WeaponObject(100, 100, 1, 10, "kitchen_knife_by_ashmo.png",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE), WeaponType.KNIFE);
-		WeaponObject weapon2 = new WeaponObject(150, 50, 1, 10, "kitchen_knife_by_ashmo.png",
-				GameSpriteFactory.getWeaponSprite(WeaponType.KNIFE), WeaponType.KNIFE);
-
-		WeaponObject weapon3 = new WeaponObject(236, 140, 1, 10, "Handgun",
-				GameSpriteFactory.getWeaponSprite(WeaponType.HANDGUN), WeaponType.HANDGUN);
-
-		WeaponObject weapon4 = new WeaponObject(600, 230, 1, 10, "Rifle",
-				GameSpriteFactory.getWeaponSprite(WeaponType.RIFLE), WeaponType.RIFLE);
-
-		WeaponObject weapon5 = new WeaponObject(750, 550, 1, 10, "Shotgun",
-				GameSpriteFactory.getWeaponSprite(WeaponType.SHOTGUN), WeaponType.SHOTGUN);
+		WeaponObject weapon = new WeaponObject(100, 100, WeaponType.KNIFE);
+		WeaponObject weapon2 = new WeaponObject(150, 50, WeaponType.KNIFE);
+		WeaponObject weapon3 = new WeaponObject(236, 140, WeaponType.HANDGUN);
+		WeaponObject weapon4 = new WeaponObject(600, 230, WeaponType.RIFLE);
+		WeaponObject weapon5 = new WeaponObject(750, 550, WeaponType.SHOTGUN);
 
 		HealthObject health = new HealthObject(200, 500, 5, "survivalbar",
 				GameSpriteFactory.getHealthSprite(HealthType.SURVIVALBAR), HealthType.SURVIVALBAR);

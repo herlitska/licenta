@@ -4,4 +4,6 @@ public interface DamageInflicter {
 
 	public double getAttackRange();
 	
+	public void inAttackRangeEvent(Damagable damagable);
+	
 }
