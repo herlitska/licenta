@@ -12,7 +12,7 @@ public class WeaponItem extends InventoryItem {
 	
 	public static WeaponItem createWeaponItem(WeaponProperties properties) {
 		WeaponItem weaponItem;
-		if (properties.getWeaponType() == WeaponType.KNIFE) {
+		if (properties.getWeaponType() == WeaponType.KNIFE || properties.getWeaponType() == WeaponType.FLASHLIGHT) {
 			weaponItem = new MeleeWeaponItem(properties);
 		} else {
 			weaponItem = new BallisticWeaponItem(properties);

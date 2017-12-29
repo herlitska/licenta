@@ -17,8 +17,10 @@ import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
+import ro.herlitska.attila.model.HealthItem;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
+import ro.herlitska.attila.model.weapon.WeaponItem;
 
 public class GameWindow implements GameView {
 
@@ -283,10 +285,20 @@ public class GameWindow implements GameView {
         for (int i = 0; i < inventory.size(); i++) {
             if (inventory.get(i) != null) {
                 drawables.add(new SpriteToDraw(inventory.get(i).getSprite(), 110 + i * 150, 650));
+                StringBuilder itemDescrBuilder = new StringBuilder();
+                itemDescrBuilder.append(inventory.get(i).getName() + " ");
+                if (inventory.get(i) instanceof WeaponItem) {
+                    WeaponItem weaponItem = (WeaponItem) inventory.get(i);
+                    itemDescrBuilder.append("\nDurability: " + weaponItem.getRemainingDurability() + "/" + weaponItem.getProperties().getDurability());
+                } else if (inventory.get(i) instanceof HealthItem) {
+                    HealthItem healthItem = (HealthItem) inventory.get(i);
+                    itemDescrBuilder.append("\nHeals: " + healthItem.getHealthRegained());
+                }
+                drawables.add(new TextToDraw(itemDescrBuilder.toString(), 46 + i * 150, 550, 16));
             }
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < inventory.size(); i++) {
             drawables.add(new RectangleToDraw(46 + i * 150, 586, 128, 128, selectedIndex == i ? 0.8 : 0.4,
                     MIN_DEPTH + 1, 255, 255, 255));
         }

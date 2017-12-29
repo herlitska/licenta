@@ -13,8 +13,9 @@ public class MeleeWeaponItem extends WeaponItem {
         switch (getProperties().getWeaponType()) {
         case KNIFE:
             attackRange = GameSpriteFactory.PLAYER_RADIUS;
-            ;
             break;
+        case FLASHLIGHT:
+            attackRange = GameSpriteFactory.PLAYER_RADIUS;
         default:
             break;
         }

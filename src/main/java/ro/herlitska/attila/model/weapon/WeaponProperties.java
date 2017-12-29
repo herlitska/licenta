@@ -21,7 +21,7 @@ public class WeaponProperties {
 			damage = 1;
 			durability = 10;
 			name = "Kitchen Knife";
-			attackDelay = 10;
+			attackDelay = 40;
 			this.weaponType = weaponType;
 			break;
 		case RIFLE:
@@ -35,9 +35,16 @@ public class WeaponProperties {
 			damage = 1;
 			durability = 10;
 			name = "Shotgun";
-			attackDelay = 120;
+			attackDelay = 80;
 			this.weaponType = weaponType;
 			break;
+		case FLASHLIGHT:
+		    damage = 1;
+            durability = 10;
+            name = "Flashlight";
+            attackDelay = 40;
+            this.weaponType = weaponType;
+            break;
 		default:
 			break;
 		}

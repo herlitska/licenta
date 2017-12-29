@@ -248,7 +248,9 @@ public class GameSpriteFactory {
 			case SHOTGUN:
 				sprite = new GameSprite(Arrays.asList("/mag7_by_ashmo_silhouette.png"));
 				break;
-
+			case FLASHLIGHT:
+			    sprite = new GameSprite(Arrays.asList(), 0);
+			    break;
 			default:
 				break;
 			}
