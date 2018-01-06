@@ -10,161 +10,182 @@ import ro.herlitska.attila.view.GameView;
 
 public class GameRoom {
 
-    private List<GameObject> objects;
-    private List<GameObject> objectsToCreate = new ArrayList<>();
-    private GameView view;
+	private List<GameObject> objects;
+	private List<GameObject> objectsToCreate = new ArrayList<>();
+	private GameView view;
 
-    private GameObject player;
+	public static final int ROOM_SIZE = 4096;
 
-    public GameRoom(List<GameObject> objects, GameView view) {
-        this.objects = objects;
-        this.view = view;
-        for (GameObject object : objects) {
-            if (object instanceof Player) {
-                player = object;
-            }
-        }
-    }
+	public static final double MARGIN_SIZE = 90;
 
-    public void createObject(GameObject object) {
-        objectsToCreate.add(object);
-    }
+	private GameObject player;
 
-    public void destroyObject(GameObject object) {
-        objects.remove(object);
-    }
+	public GameRoom(List<GameObject> objects, GameView view) {
+		this.objects = objects;
+		this.view = view;
+		for (GameObject object : objects) {
+			if (object instanceof Player) {
+				player = object;
+			}
+		}
+	}
 
-    public GameView getView() {
-        return view;
-    }
+	public void createObject(GameObject object) {
+		objectsToCreate.add(object);
+	}
 
-    public double getPlayerX() {
-        return player.getX();
-    }
+	public void destroyObject(GameObject object) {
+		objects.remove(object);
+	}
 
-    public double getPlayerY() {
-        return player.getY();
-    }
+	public GameView getView() {
+		return view;
+	}
 
-    public void stepEvent() {
-        objects.forEach(GameObject::stepEvent);
-    }
+	public double getPlayerX() {
+		return player.getX();
+	}
 
-    public void endOfStepEvent() {
-        objects.addAll(objectsToCreate);
-        objectsToCreate.clear();
-        objects.forEach(GameObject::endOfStepEvent);
-    }
+	public double getPlayerY() {
+		return player.getY();
+	}
 
-    public void drawEvent() {
-        view.preDrawEvent();
+	public void stepEvent() {
+		objects.forEach(GameObject::stepEvent);
+	}
 
-        view.drawObjectSprites(objects);
-        objects.forEach(GameObject::drawEvent);
+	public void endOfStepEvent() {
+		objects.addAll(objectsToCreate);
+		objectsToCreate.clear();
+		objects.forEach(GameObject::endOfStepEvent);
+	}
 
-        view.postDrawEvent();
-    }
+	public void drawEvent() {
+		view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE);
 
-    public void keyPressedEvent(GameKeyCode key) {
-        for (GameObject object : objects) {
-            object.keyPressedEvent(key);
-        }
-    }
+		view.drawObjectSprites(objects);
+		objects.forEach(GameObject::drawEvent);
 
-    public void mouseMovedEvent(double mouseX, double mouseY) {
-        objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
-    }
+		view.postDrawEvent();
+	}
 
-    public void mouseClickedEvent(MouseButton button, double x, double y) {
-        System.out.println("Game Room mouse clicked");
-        System.out.println(button);
-        objects.forEach(object -> object.mouseClickedEvent(button, x, y));
-    }
+	public void keyPressedEvent(GameKeyCode key) {
+		for (GameObject object : objects) {
+			object.keyPressedEvent(key);
+		}
+	}
 
-    public void keyReleasedEvent(GameKeyCode key) {
-        for (GameObject object : objects) {
-            object.keyReleasedEvent(key);
-        }
-    }
+	public void mouseMovedEvent(double mouseX, double mouseY) {
+		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
+	}
 
-    public void keyDownEvent(GameKeyCode key) {
-        for (GameObject object : objects) {
-            object.keyDownEvent(key);
-        }
-    }
+	public void mouseClickedEvent(MouseButton button, double x, double y) {
+		System.out.println("Game Room mouse clicked");
+		System.out.println(button);
+		objects.forEach(object -> object.mouseClickedEvent(button, x, y));
+	}
 
-    public void checkCollision() {
-        for (int i = 0; i < objects.size() - 1; i++) {
-            for (int j = i + 1; j < objects.size(); j++) {
-                GameObject first = objects.get(i);
-                GameObject second = objects.get(j);
-                if (inCollision(first, first.getX(), first.getY(), second, false)) {
-                    first.collisionEvent(second);
-                    second.collisionEvent(first);
-                }
-            }
-        }
-    }
+	public void keyReleasedEvent(GameKeyCode key) {
+		for (GameObject object : objects) {
+			object.keyReleasedEvent(key);
+		}
+	}
 
-    /**
-     * Returns <code>true</code> if <code>object</code> placed at (
-     * <code>x</code>, <code>y</code>) would be in collision with another
-     * object.
-     * 
-     * @param object
-     * @param x
-     *            x coordinate of <code>object</code> where collision is checked
-     * @param y
-     *            y coordinate of <code>object</code> where collision is checked
-     * @return
-     */
-    public boolean inCollision(GameObject object, double x, double y, boolean onlySolid) {
-        for (int i = 0; i < objects.size(); i++) {
-            GameObject other = objects.get(i);
+	public void keyDownEvent(GameKeyCode key) {
+		for (GameObject object : objects) {
+			object.keyDownEvent(key);
+		}
+	}
 
-            if (inCollision(object, x, y, other, onlySolid)) {
-                return true;
-            }
-        }
+	public void checkCollision() {
+		for (int i = 0; i < objects.size() - 1; i++) {
+			for (int j = i + 1; j < objects.size(); j++) {
+				GameObject first = objects.get(i);
+				GameObject second = objects.get(j);
+				if (inCollision(first, first.getX(), first.getY(), second, false)) {
+					first.collisionEvent(second);
+					second.collisionEvent(first);
+				}
+			}
+		}
+	}
 
-        return false;
-    }
+	/**
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with another
+	 * object.
+	 * 
+	 * @param object
+	 * @param x
+	 *            x coordinate of <code>object</code> where collision is checked
+	 * @param y
+	 *            y coordinate of <code>object</code> where collision is checked
+	 * @return
+	 */
+	public boolean inCollision(GameObject object, double x, double y, boolean onlySolid) {
+		for (int i = 0; i < objects.size(); i++) {
+			GameObject other = objects.get(i);
 
-    /**
-     * Returns <code>true</code> if <code>object</code> placed at (
-     * <code>x</code>, <code>y</code>) would be in collision with
-     * <code>other</code>.
-     * 
-     * @param object
-     * @param x
-     *            x coordinate of <code>object</code> where collision is checked
-     * @param y
-     *            y coordinate of <code>object</code> where collision is checked
-     * @param other
-     * @return
-     */
-    private boolean inCollision(GameObject object, double x, double y, GameObject other, boolean onlySolid) {
-        return Utils.dist(other.getX(), other.getY(), x,
-                y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
-                        + other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale()
-                && !object.equals(other) && (!onlySolid || (object.isSolid() && other.isSolid()));
-    }
+			if (inCollision(object, x, y, other, onlySolid)) {
+				return true;
+			}
+		}
 
-    public void checkAttackRange() {
-        for (GameObject attacker : objects) {
-            if (attacker instanceof DamageInflicter && ((DamageInflicter) attacker).getAttackRange() != -1) {
-                for (GameObject damagable : objects) {
-                    if (damagable instanceof Damagable) {
-                        if (Utils.dist(attacker.getX(), attacker.getY(), damagable.getX(),
-                                damagable.getY()) < ((DamageInflicter) attacker).getAttackRange()
-                                        + damagable.getSprite().getBoundingCircleRadius()
-                                && !attacker.equals(damagable)) {
-                            ((DamageInflicter) attacker).inAttackRangeEvent((Damagable) damagable);
-                        }
-                    }
-                }
-            }
-        }
-    }
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with
+	 * <code>other</code>.
+	 * 
+	 * @param object
+	 * @param x
+	 *            x coordinate of <code>object</code> where collision is checked
+	 * @param y
+	 *            y coordinate of <code>object</code> where collision is checked
+	 * @param other
+	 * @return
+	 */
+	private boolean inCollision(GameObject object, double x, double y, GameObject other, boolean onlySolid) {
+
+		if (Utils.dist(other.getX(), other.getY(), x,
+				y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
+						+ other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale()
+				&& !object.equals(other) && (!onlySolid || (object.isSolid() && other.isSolid()))) {
+			if (object instanceof Player || other instanceof Player) {
+				System.out.println(
+						"COLLISION :" + " " + object.getClass().getName() + " & " + other.getClass().getName());
+			}
+			return true;
+		} else
+			return false;
+
+	}
+
+	public void checkAttackRange() {
+		for (GameObject attacker : objects) {
+			if (attacker instanceof DamageInflicter && ((DamageInflicter) attacker).getAttackRange() != -1) {
+				for (GameObject damagable : objects) {
+					if (damagable instanceof Damagable) {
+						if (Utils.dist(attacker.getX(), attacker.getY(), damagable.getX(),
+								damagable.getY()) < ((DamageInflicter) attacker).getAttackRange()
+										+ damagable.getSprite().getBoundingCircleRadius()
+								&& !attacker.equals(damagable)) {
+							((DamageInflicter) attacker).inAttackRangeEvent((Damagable) damagable);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public boolean isInRoom(double x, double y, GameObject object) {
+		return x > MARGIN_SIZE && x < ROOM_SIZE - MARGIN_SIZE && y > MARGIN_SIZE && y < ROOM_SIZE - MARGIN_SIZE;
+	}
+
+	public boolean isInRoom(GameObject object) {
+		return isInRoom(object.getX(), object.getY(), object);
+	}
 
 }

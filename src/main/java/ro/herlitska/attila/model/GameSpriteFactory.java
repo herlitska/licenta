@@ -67,6 +67,11 @@ public class GameSpriteFactory {
 
 	private static GameSprite bulletSprite;
 
+	private static GameSprite wallSprite = new GameSprite("/SeamlessWall/wall128x128.png");
+
+	private static GameSprite backgroundSprite = new GameSprite(
+			"/grass_high_view_seamless_texture_2048x2048_by_hhh316-d8g3kir.jpg");
+
 	private final static String PLAYER_SPRITE_PATH = "/Top_Down_Survivor/&wpn/&mtn/survivor-&mtn_&wpn_&num.png";
 
 	private static final String ZOMBIE_SPRITE_PATH = "/zombie_01/&mtn/&mtn_&num.png";
@@ -142,7 +147,7 @@ public class GameSpriteFactory {
 				sprite.setDepth(GameWindow.MAX_DEPTH);
 			}
 			if (motion == ZombieMotion.ATTACK) {
-			    sprite.setAnimationSpeed(5);
+				sprite.setAnimationSpeed(5);
 			}
 			return sprite;
 		}
@@ -249,8 +254,8 @@ public class GameSpriteFactory {
 				sprite = new GameSprite(Arrays.asList("/mag7_by_ashmo_silhouette.png"));
 				break;
 			case FLASHLIGHT:
-			    sprite = new GameSprite(Arrays.asList(), 0);
-			    break;
+				sprite = new GameSprite(Arrays.asList(), 0);
+				break;
 			default:
 				break;
 			}
@@ -298,6 +303,16 @@ public class GameSpriteFactory {
 			bulletSprite.setDepth(GameWindow.MIN_DEPTH);
 		}
 		return bulletSprite;
+	}
+
+	public static GameSprite getWallSprite() {
+
+		return wallSprite;
+	}
+
+	public static GameSprite getBackgroundSprite() {
+
+		return backgroundSprite;
 	}
 
 }

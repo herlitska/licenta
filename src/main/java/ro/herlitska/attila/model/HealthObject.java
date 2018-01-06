@@ -11,6 +11,7 @@ public class HealthObject extends GameObject {
 		this.healthRegained = healthRegained;
 		this.name = name;
 		this.healthType = healtType;
+		setSolid(false);
 
 	}
 
@@ -25,7 +26,5 @@ public class HealthObject extends GameObject {
 	public HealthType getHealthType() {
 		return healthType;
 	}
-	
-	
 
 }

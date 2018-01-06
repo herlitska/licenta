@@ -10,6 +10,7 @@ public class WeaponObject extends GameObject {
 	public WeaponObject(double x, double y, WeaponType weaponType) {
 		super(x, y, GameSpriteFactory.getWeaponSprite(weaponType));
 		properties = new WeaponProperties(weaponType);
+		setSolid(false);
 	}
 
 	public WeaponProperties getProperties() {

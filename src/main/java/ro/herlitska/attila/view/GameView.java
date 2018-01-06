@@ -8,7 +8,7 @@ import ro.herlitska.attila.model.InventoryItem;
 
 public interface GameView {
 
-	public void preDrawEvent();
+	public void preDrawEvent(GameSprite backgroundSprite, int roomSize);
 
 	public void postDrawEvent();
 
@@ -25,7 +25,5 @@ public interface GameView {
 																					// inventory
 
 	public void drawHealth(double health);
-
-	
 
 }
