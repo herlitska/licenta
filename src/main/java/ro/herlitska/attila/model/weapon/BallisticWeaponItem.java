@@ -17,7 +17,6 @@ public class BallisticWeaponItem extends WeaponItem {
                     getProperties().getDamage());
             bullet.setDirection(weaponOwner.getAngle());
             bullet.setAngle(weaponOwner.getAngle());
-            bullet.setRoom(weaponOwner.getRoom());
             weaponOwner.getRoom().createObject(bullet);
         }
         

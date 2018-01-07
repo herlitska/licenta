@@ -3,6 +3,7 @@ package ro.herlitska.attila;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -49,13 +50,17 @@ public class MainApp extends Application {
 		objects.add(new HealthObject(255, 132, 15, "hotdog", GameSpriteFactory.getHealthSprite(HealthType.HOTDOG),
 				HealthType.HOTDOG));
 
-		objects.add(new Zombie(1000, 100));
-		objects.add(new Zombie(20, 300));
+		objects.add(new Zombie(800, 200));
+		objects.add(new Zombie(600, 300));
+		objects.add(new Zombie(700, 300));
+		objects.add(new Zombie(300, 300));
+		objects.add(new Zombie(400, 300));
+		objects.add(new Zombie(500, 300));
 
 		GameSprite wallSprite = GameSpriteFactory.getWallSprite();
 
 		ctr = new GameController();
-		GameWindow view = new GameWindow(ctr);
+		GameWindow view = new GameWindow(ctr, 1024, 768);
 
 		GameRoom room = new GameRoom(objects, view);
 

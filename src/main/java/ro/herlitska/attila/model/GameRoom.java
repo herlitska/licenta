@@ -2,6 +2,9 @@ package ro.herlitska.attila.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.input.MouseButton;
 
@@ -14,11 +17,13 @@ public class GameRoom {
 	private List<GameObject> objectsToCreate = new ArrayList<>();
 	private GameView view;
 
-	public static final int ROOM_SIZE = 4096;
+	public static final int ROOM_SIZE = 1024;
 
 	public static final double MARGIN_SIZE = 90;
 
 	private GameObject player;
+
+	private AtomicInteger secondsPassed = new AtomicInteger(0);
 
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
@@ -26,8 +31,21 @@ public class GameRoom {
 		for (GameObject object : objects) {
 			if (object instanceof Player) {
 				player = object;
+				break;
 			}
 		}
+		startGame();
+	}
+
+	public void startGame() {
+		Timer timer = new Timer(true);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				secondsPassed.incrementAndGet();
+			}
+		}, 0, 1000);
 	}
 
 	public void createObject(GameObject object) {
@@ -51,19 +69,22 @@ public class GameRoom {
 	}
 
 	public void stepEvent() {
+		GameSpriteFactory.stepEventAllSprites();
 		objects.forEach(GameObject::stepEvent);
 	}
 
 	public void endOfStepEvent() {
-		objects.addAll(objectsToCreate);
+		objectsToCreate.forEach(o -> o.setRoom(this));
+		objects.addAll(objectsToCreate);		
 		objectsToCreate.clear();
 		objects.forEach(GameObject::endOfStepEvent);
 	}
 
 	public void drawEvent() {
-		view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE);
+		view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, player.getX(), player.getY());
 
 		view.drawObjectSprites(objects);
+		view.drawTime(secondsPassed.get());
 		objects.forEach(GameObject::drawEvent);
 
 		view.postDrawEvent();
@@ -111,9 +132,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with another
-	 * object.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with another object.
 	 * 
 	 * @param object
 	 * @param x
@@ -135,9 +155,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with
-	 * <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x
@@ -188,4 +207,7 @@ public class GameRoom {
 		return isInRoom(object.getX(), object.getY(), object);
 	}
 
+	public int getSecondsPassed() {
+		return secondsPassed.get();
+	}
 }

@@ -8,7 +8,7 @@ import ro.herlitska.attila.model.InventoryItem;
 
 public interface GameView {
 
-	public void preDrawEvent(GameSprite backgroundSprite, int roomSize);
+	public void preDrawEvent(GameSprite backgroundSprite, int roomSize, double playerX, double playerY);
 
 	public void postDrawEvent();
 
@@ -20,10 +20,10 @@ public interface GameView {
 
 	public void drawText(String text, double x, double y, double fontSize);
 
-	public void drawInventory(List<InventoryItem> inventory, int selectedIndex); // drawing
-																					// the
-																					// inventory
+	public void drawInventory(List<InventoryItem> inventory, int selectedIndex); 
 
 	public void drawHealth(double health);
+	
+	public void drawTime(int secondsPassed);
 
 }

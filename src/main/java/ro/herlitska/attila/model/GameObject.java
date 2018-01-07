@@ -48,7 +48,7 @@ public abstract class GameObject {
 	}
 
 	public void stepEvent() {
-		sprite.stepEvent();
+		
 	}
 	
 	public void endOfStepEvent() {

@@ -27,6 +27,12 @@ public class GameWindow implements GameView {
 
 	public static final int MIN_DEPTH = -100;
 	public static final int MAX_DEPTH = 100;
+	
+	public final int WIDTH;
+	public final int HEIGHT;
+	
+	private int viewX;
+	private int viewY;
 
 	private abstract class Drawable {
 		public final double x;
@@ -117,7 +123,10 @@ public class GameWindow implements GameView {
 	// private List<SpriteToDraw> spritesToDraw;
 	private List<Drawable> drawables;
 
-	public GameWindow(GameEventHandler eventHandler) {
+	public GameWindow(GameEventHandler eventHandler, int width, int height) {
+		this.WIDTH = width;
+		this.HEIGHT = height;
+		
 		rootPane = new Group();
 		canvas = new Canvas(1024, 768);
 		rootPane.getChildren().add(canvas);
@@ -195,7 +204,7 @@ public class GameWindow implements GameView {
 			}
 		});
 
-		scene.setOnMouseMoved(e -> eventHandler.mouseMoved(e.getSceneX(), e.getSceneY()));
+		scene.setOnMouseMoved(e -> eventHandler.mouseMoved(e.getSceneX() + viewX, e.getSceneY() + viewY));
 
 		// canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
 
@@ -207,27 +216,30 @@ public class GameWindow implements GameView {
 	}
 
 	@Override
-	public void preDrawEvent(GameSprite backgroundSprite, int roomSize) {
+	public void preDrawEvent(GameSprite backgroundSprite, int roomSize, double playerX, double playerY) {
+		viewX = (int) Math.min(Math.max(playerX - WIDTH / 2, 0), roomSize - WIDTH);
+		viewY = (int) Math.min(Math.max(playerY - HEIGHT / 2, 0), roomSize - HEIGHT);
+		
 		drawables = new ArrayList<>();
 
 		for (int i = 0; i < roomSize / backgroundSprite.getSize(); i++) {
 			for (int j = 0; j < roomSize / backgroundSprite.getSize(); j++) {
 				drawRotatedScaledImage(backgroundSprite.getImage(), 0,
-						backgroundSprite.getSize() / 2 + i * backgroundSprite.getSize(),
-						backgroundSprite.getSize() / 2 + j * backgroundSprite.getSize(), 1);
+						backgroundSprite.getSize() / 2 + i * backgroundSprite.getSize() - viewX,
+						backgroundSprite.getSize() / 2 + j * backgroundSprite.getSize() - viewY, 1);
 			}
 		}
 		GameSprite wallSprite = GameSpriteFactory.getWallSprite();
-		drawRotatedScaledImage(wallSprite.getImage(), 0, 0, 0, 1);
-		drawRotatedScaledImage(wallSprite.getImage(), 0, 0, roomSize, 1);
-		drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize, 0, 1);
-		drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize, roomSize, 1);
+		drawRotatedScaledImage(wallSprite.getImage(), 0, 0 - viewX, 0 - viewY, 1);
+		drawRotatedScaledImage(wallSprite.getImage(), 0, 0 - viewX, roomSize - viewY, 1);
+		drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize - viewX, 0 - viewY, 1);
+		drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize - viewX, roomSize - viewY, 1);
 
 		for (int i = 1; i < roomSize / wallSprite.getSize() - 1; i++) {
-			drawRotatedScaledImage(wallSprite.getImage(), 0, i * wallSprite.getSize(), 0, 1);
-			drawRotatedScaledImage(wallSprite.getImage(), 0, 0, i * wallSprite.getSize(), 1);
-			drawRotatedScaledImage(wallSprite.getImage(), 0, i * wallSprite.getSize(), roomSize, 1);
-			drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize, i * wallSprite.getSize(), 1);
+			drawRotatedScaledImage(wallSprite.getImage(), 0, i * wallSprite.getSize() - viewX, 0 - viewY, 1);
+			drawRotatedScaledImage(wallSprite.getImage(), 0, 0 - viewX, i * wallSprite.getSize() - viewY, 1);
+			drawRotatedScaledImage(wallSprite.getImage(), 0, i * wallSprite.getSize() - viewX, roomSize - viewY, 1);
+			drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize - viewX, i * wallSprite.getSize() - viewY, 1);
 		}
 
 	}
@@ -259,8 +271,7 @@ public class GameWindow implements GameView {
 	public void drawObjectSprites(java.util.List<GameObject> objects) {
 		for (GameObject object : objects) {
 			if (object.isVisible()) {
-				drawables.add(new SpriteToDraw(object.getSprite(), object.getX(), object.getY(), object.getAngle()));
-
+				drawables.add(new SpriteToDraw(object.getSprite(), object.getX() - viewX, object.getY() - viewY, object.getAngle()));
 			}
 		}
 	}
@@ -329,16 +340,22 @@ public class GameWindow implements GameView {
 		playerHealth = health;
 
 		drawables.add(new RectangleToDraw(610, 20, 40, 380, 0.2, MIN_DEPTH + 1, 255, 255, 255));
-		drawables
-				.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
-						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
-								* (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
-								: 255),
-						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
-								: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
-						0));
+		drawables.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
+				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2
+						? 255 * (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
+						: 255),
+				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+						: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
+				0));
 
 		drawables.add(new TextToDraw(String.valueOf((int) playerHealth), 570, 50, 20));
+	}
+	
+	@Override
+	public void drawTime(int secondsPassed) {
+		String minutes = String.format("%02d", secondsPassed / 60);
+		String seconds = String.format("%02d", secondsPassed % 60);
+		drawables.add(new TextToDraw(minutes + ":" + seconds, 100, 50, 20));
 	}
 
 	public Scene getScene() {
@@ -346,19 +363,16 @@ public class GameWindow implements GameView {
 	}
 
 	/**
-	 * Sets the transform for the GraphicsContext to rotate around a pivot
-	 * point.
+	 * Sets the transform for the GraphicsContext to rotate around a pivot point.
 	 *
 	 * @param gc
 	 *            the graphics context the transform to applied to.
 	 * @param angle
 	 *            the angle of rotation.
 	 * @param px
-	 *            the x pivot co-ordinate for the rotation (in canvas
-	 *            co-ordinates).
+	 *            the x pivot co-ordinate for the rotation (in canvas co-ordinates).
 	 * @param py
-	 *            the y pivot co-ordinate for the rotation (in canvas
-	 *            co-ordinates).
+	 *            the y pivot co-ordinate for the rotation (in canvas co-ordinates).
 	 */
 	private void rotate(double angle, double px, double py) {
 		Rotate r = new Rotate(angle, px, py);
@@ -368,8 +382,8 @@ public class GameWindow implements GameView {
 	/**
 	 * Draws an image on a graphics context.
 	 *
-	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the
-	 * point: (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
+	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the point:
+	 * (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
 	 *
 	 * @param gc
 	 *            the graphics context the image is to be drawn on.
