@@ -23,6 +23,8 @@ import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.HealthItem;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
+import ro.herlitska.attila.model.persistence.Highscore;
+import ro.herlitska.attila.model.GameRoom.GamePhase;
 import ro.herlitska.attila.model.weapon.WeaponItem;
 
 public class GameWindow implements GameView {
@@ -128,6 +130,10 @@ public class GameWindow implements GameView {
 	private AnimationTimer gameLoop;
 	private Scene scene;
 
+	private List<GameButton> buttons = new ArrayList<>();
+	private GameButton startButton;
+	private GameButton playAgainButton;
+
 	// private List<SpriteToDraw> spritesToDraw;
 	private List<Drawable> drawables;
 
@@ -212,15 +218,57 @@ public class GameWindow implements GameView {
 			}
 		});
 
-		scene.setOnMouseMoved(e -> eventHandler.mouseMoved(e.getSceneX() + viewX, e.getSceneY() + viewY));
-
-		// canvas.setOnMouseClicked(e -> System.out.println("Mouse clicked"));
+		scene.setOnMouseMoved(e -> {
+			eventHandler.mouseMoved(e.getSceneX() + viewX, e.getSceneY() + viewY);
+			for (GameButton gameButton : buttons) {
+				if (e.getSceneX() > gameButton.getX() && e.getSceneX() < gameButton.getX() + gameButton.getWidth()
+						&& e.getSceneY() > gameButton.getY()
+						&& e.getSceneY() < gameButton.getY() + gameButton.getHeight()) {
+					gameButton.mouseInside();
+				} else {
+					gameButton.mouseOutside();
+				}
+			}
+		});
 
 		scene.setOnMousePressed(e -> {
 			eventHandler.mouseClicked(e.getButton(), e.getSceneX(), e.getSceneY());
-			System.out.println(e.getButton());
+			for (GameButton gameButton : buttons) {
+				if (e.getSceneX() > gameButton.getX() && e.getSceneX() < gameButton.getX() + gameButton.getWidth()
+						&& e.getSceneY() > gameButton.getY()
+						&& e.getSceneY() < gameButton.getY() + gameButton.getHeight()) {
+					gameButton.mousePressed();
+				}
+			}
 		});
 
+		startButton = new GameButton("START GAME", 412.0, 344.0, 200.0, 80.0) {
+
+			@Override
+			public void mousePressed() {
+				eventHandler.startButtonPressed();
+			}
+		};
+
+		playAgainButton = new GameButton("PLAY AGAIN", 412.0, 560.0, 200.0, 80.0) {
+
+			@Override
+			public void mousePressed() {
+				eventHandler.startButtonPressed();
+			}
+		};
+	}
+
+	@Override
+	public void setGamePhase(GamePhase gamePhase) {
+		buttons.clear();
+		if (gamePhase == GamePhase.MAIN_MENU) {
+			buttons.add(startButton);
+		} else if (gamePhase == GamePhase.GAME) {
+
+		} else if (gamePhase == GamePhase.GAME_OVER) {
+			buttons.add(playAgainButton);
+		}
 	}
 
 	@Override
@@ -249,7 +297,6 @@ public class GameWindow implements GameView {
 			drawRotatedScaledImage(wallSprite.getImage(), 0, i * wallSprite.getSize() - viewX, roomSize - viewY, 1);
 			drawRotatedScaledImage(wallSprite.getImage(), 0, roomSize - viewX, i * wallSprite.getSize() - viewY, 1);
 		}
-
 	}
 
 	@Override
@@ -350,14 +397,13 @@ public class GameWindow implements GameView {
 		playerHealth = health;
 
 		drawables.add(new RectangleToDraw(610, 20, 40, 380, 0.2, MIN_DEPTH + 1, 255, 255, 255));
-		drawables
-				.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
-						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
-								* (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
-								: 255),
-						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
-								: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
-						0));
+		drawables.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
+				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2
+						? 255 * (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
+						: 255),
+				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+						: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
+				0));
 
 		drawables.add(new TextToDraw(String.valueOf((int) playerHealth), 570, 50, 20));
 	}
@@ -370,20 +416,37 @@ public class GameWindow implements GameView {
 	}
 
 	@Override
-	public void drawMainMenu() {
-		drawables.add(new RectangleToDraw(312, 214, 300, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
-		drawables.add(new TextToDraw("ZOMBIE HUNTER", 350, 260, 45));
+	public void drawZombieKillCount(int killCount) {
+		drawables.add(new TextToDraw("Zombies killed: " + killCount, 180, 50, 20));
 	}
 
 	@Override
-	public void drawButtons(List<GameButton> buttons) {
+	public void drawMainMenu() {
+		drawables.add(new RectangleToDraw(312, 214, 300, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
+		drawables.add(new TextToDraw("ZOMBIE HUNTER", 512, 300, 45, TextAlignment.CENTER));
+		drawButtons();
+	}
+
+	@Override
+	public void drawGameOverMenu(List<Highscore> highscores) {
+		drawables.add(new RectangleToDraw(312, 64, 600, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
+		drawables.add(new TextToDraw("GAME OVER", 512, 120, 45, TextAlignment.CENTER));
+		for (int i = 0; i < highscores.size(); i++) {
+			drawables.add(new TextToDraw((i + 1) + ".", 330, 150 + i * 20, 16));
+			drawables.add(new TextToDraw(highscores.get(i).getPlayerName(), 360, 150 + i * 20, 16));
+			drawables.add(new TextToDraw(highscores.get(i).getTime(), 580, 150 + i * 20, 16));
+			drawables.add(new TextToDraw(String.valueOf(highscores.get(i).getZombiesKilled()), 650, 150 + i * 20, 16));
+		}
+		drawButtons();
+	}
+
+	private void drawButtons() {
 		for (GameButton gameButton : buttons) {
 			drawables.add(new RectangleToDraw(gameButton.getX(), gameButton.getY(), gameButton.getHeight(),
 					gameButton.getWidth(), gameButton.isMouseOnButton() ? 1.0 : 0.5, MIN_DEPTH + 1, 0, 128, 0));
-			drawables.add(new TextToDraw(gameButton.getText(), gameButton.getX(), gameButton.getY(), 20,
-					TextAlignment.CENTER));
+			drawables.add(new TextToDraw(gameButton.getText(), gameButton.getX() + gameButton.getWidth() / 2,
+					gameButton.getY() + gameButton.getHeight() / 2, 25, TextAlignment.CENTER));
 		}
-
 	}
 
 	public Scene getScene() {
@@ -391,19 +454,16 @@ public class GameWindow implements GameView {
 	}
 
 	/**
-	 * Sets the transform for the GraphicsContext to rotate around a pivot
-	 * point.
+	 * Sets the transform for the GraphicsContext to rotate around a pivot point.
 	 *
 	 * @param gc
 	 *            the graphics context the transform to applied to.
 	 * @param angle
 	 *            the angle of rotation.
 	 * @param px
-	 *            the x pivot co-ordinate for the rotation (in canvas
-	 *            co-ordinates).
+	 *            the x pivot co-ordinate for the rotation (in canvas co-ordinates).
 	 * @param py
-	 *            the y pivot co-ordinate for the rotation (in canvas
-	 *            co-ordinates).
+	 *            the y pivot co-ordinate for the rotation (in canvas co-ordinates).
 	 */
 	private void rotate(double angle, double px, double py) {
 		Rotate r = new Rotate(angle, px, py);
@@ -413,8 +473,8 @@ public class GameWindow implements GameView {
 	/**
 	 * Draws an image on a graphics context.
 	 *
-	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the
-	 * point: (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
+	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the point:
+	 * (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
 	 *
 	 * @param gc
 	 *            the graphics context the image is to be drawn on.

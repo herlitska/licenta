@@ -1,13 +1,14 @@
 package ro.herlitska.attila.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.input.MouseButton;
-import net.bytebuddy.matcher.IsNamedMatcher;
+import ro.herlitska.attila.model.persistence.Highscore;
 import ro.herlitska.attila.model.weapon.WeaponObject;
 import ro.herlitska.attila.model.weapon.WeaponType;
 import ro.herlitska.attila.util.Utils;
@@ -17,10 +18,11 @@ public class GameRoom {
 
 	private List<GameObject> objects;
 	private List<GameObject> objectsToCreate = new ArrayList<>();
+	private List<GameObject> objectsToDestroy = new ArrayList<>();
+	
 	private GameView view;
-	private List<GameButton> buttons;
 
-	private enum GamePhase {
+	public enum GamePhase {
 		MAIN_MENU, GAME, GAME_OVER
 	}
 
@@ -31,35 +33,31 @@ public class GameRoom {
 	public static final double MARGIN_SIZE = 90;
 
 	private GameObject player;
-
+	
 	private AtomicInteger secondsPassed = new AtomicInteger(0);
+	private Timer gameTimer;
+	
+	private List<Highscore> highscores = new ArrayList<>();
 
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
 		this.view = view;
-		this.buttons = new ArrayList<>();
-		for (GameObject object : objects) {
-			if (object instanceof Player) {
-				player = object;
-				break;
-			}
-		}
+		
 		initMainMenu();
 	}
 
 	public void initMainMenu() {
-		buttons.add(new GameButton("START GAME", 412.0, 344.0, 200.0, 80.0) {
-
-			@Override
-			public void mousePressed() {
-				startGame();
-			}
-		});
+		view.setGamePhase(gamePhase);
 	}
 
 	public void startGame() {
+		gamePhase = GamePhase.GAME;
+		view.setGamePhase(GamePhase.GAME);
+				
 		secondsPassed.set(0);
-		buttons.clear();
+		
+		Zombie.resetKillCount();
+		
 		Player player = new Player(500, 500);
 
 		player.setPlayerName("JOszef");
@@ -85,9 +83,16 @@ public class GameRoom {
 		objects.add(new Zombie(500, 300));
 
 		objects.forEach(object -> object.setRoom(this));
+		
+		for (GameObject object : objects) {
+			if (object instanceof Player) {
+				this.player = object;
+				break;
+			}
+		}
 
-		Timer timer = new Timer(true);
-		timer.scheduleAtFixedRate(new TimerTask() {
+		gameTimer = new Timer(true);
+		gameTimer.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -95,13 +100,53 @@ public class GameRoom {
 			}
 		}, 0, 1000);
 	}
+	
+	public void initGameOver() {
+		gamePhase = GamePhase.GAME_OVER;
+		view.setGamePhase(gamePhase);
+		
+		highscores.add(new Highscore(0, "Sanyi", "01:00", 20));
+		highscores.add(new Highscore(0, "Jóska", "02:00", 18));
+		highscores.add(new Highscore(0, "Gyula", "01:30", 18));
+		highscores.add(new Highscore(0, "Gazsi", "01:50", 17));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		
+		Collections.sort(highscores, (h1, h2) -> {
+			Highscore highscore1 = (Highscore) h1;
+			Highscore highscore2 = (Highscore) h2;
+			if (highscore1.getZombiesKilled() != highscore2.getZombiesKilled()) {
+				return highscore2.getZombiesKilled() - highscore1.getZombiesKilled();
+			} else {
+				return Highscore.compareTime(highscore2, highscore1);
+			}
+		});
+		
+		objectsToDestroy.addAll(objects);
+		
+		gameTimer.cancel();
+	}
 
 	public void createObject(GameObject object) {
 		objectsToCreate.add(object);
 	}
 
 	public void destroyObject(GameObject object) {
-		objects.remove(object);
+		objectsToDestroy.add(object);
 	}
 
 	public GameView getView() {
@@ -109,11 +154,19 @@ public class GameRoom {
 	}
 
 	public double getPlayerX() {
-		return player.getX();
+		if (player != null) {
+			return player.getX();
+		} else {
+			return -1;
+		}
 	}
 
 	public double getPlayerY() {
-		return player.getY();
+		if (player != null) {
+			return player.getY();
+		} else {
+			return -1;
+		}
 	}
 
 	public void stepEvent() {
@@ -125,6 +178,10 @@ public class GameRoom {
 		objectsToCreate.forEach(o -> o.setRoom(this));
 		objects.addAll(objectsToCreate);
 		objectsToCreate.clear();
+		
+		objects.removeAll(objectsToDestroy);
+		objectsToDestroy.clear();
+		
 		objects.forEach(GameObject::endOfStepEvent);
 	}
 
@@ -132,19 +189,18 @@ public class GameRoom {
 		if (gamePhase != GamePhase.GAME) {
 			view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, ROOM_SIZE / 2, ROOM_SIZE / 2);
 		} else {
-			view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, player.getX(), player.getY());
+			view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, getPlayerX(), getPlayerY());
 		}
 
 		if (gamePhase == GamePhase.GAME) {
 			view.drawObjectSprites(objects);
 			view.drawTime(secondsPassed.get());
+			view.drawZombieKillCount(Zombie.getZombiesKilled());
 			objects.forEach(GameObject::drawEvent);
-			view.drawButtons(buttons);
 		} else if (gamePhase == GamePhase.MAIN_MENU) {
 			view.drawMainMenu();
-			view.drawButtons(buttons);
 		} else if (gamePhase == GamePhase.GAME_OVER) {
-			view.drawButtons(buttons);
+			view.drawGameOverMenu(highscores);
 		}
 		view.postDrawEvent();
 	}
@@ -157,25 +213,10 @@ public class GameRoom {
 
 	public void mouseMovedEvent(double mouseX, double mouseY) {
 		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
-		for (GameButton gameButton : buttons) {
-			if (mouseX > gameButton.getX() && mouseX < gameButton.getX() + gameButton.getWidth()
-					&& mouseY > gameButton.getY() && mouseY < gameButton.getY() + gameButton.getHeight()) {
-				gameButton.mouseInside();
-			} else {
-				gameButton.mouseOutside();
-			}
-		}
 	}
 
 	public void mouseClickedEvent(MouseButton button, double mouseX, double mouseY) {
-
 		objects.forEach(object -> object.mouseClickedEvent(button, mouseX, mouseY));
-		for (GameButton gameButton : buttons) {
-			if (mouseX > gameButton.getX() && mouseX < gameButton.getX() + gameButton.getWidth()
-					&& mouseY > gameButton.getY() && mouseY < gameButton.getY() + gameButton.getHeight()) {
-				gameButton.mousePressed();
-			}
-		}
 	}
 
 	public void keyReleasedEvent(GameKeyCode key) {
@@ -204,9 +245,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with another
-	 * object.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with another object.
 	 * 
 	 * @param object
 	 * @param x
@@ -228,9 +268,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with
-	 * <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x

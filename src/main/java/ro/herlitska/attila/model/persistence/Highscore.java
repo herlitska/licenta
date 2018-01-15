@@ -18,17 +18,28 @@ public class Highscore implements Serializable {
 
 	@Id
 	@GeneratedValue
-    @Column(name = "idhighscore", unique = true)
-    private int idHighScore;
+	@Column(name = "idhighscore", unique = true)
+	private int idHighScore;
 
-    @Column(name = "player_name", nullable = false)
-    private String playerName;
+	@Column(name = "player_name", nullable = false)
+	private String playerName;
 
-    @Column(name = "time", nullable = false)
-    private String time;
-    
-    @Column(name = "zombies_killed", nullable = false)
-    private int zombiesKilled;
+	@Column(name = "time", nullable = false)
+	private String time;
+
+	@Column(name = "zombies_killed", nullable = false)
+	private int zombiesKilled;
+
+	public Highscore() {
+		
+	}
+	
+	public Highscore(int idHighScore, String playerName, String time, int zombiesKilled) {
+		this.idHighScore = idHighScore;
+		this.playerName = playerName;
+		this.time = time;
+		this.zombiesKilled = zombiesKilled;
+	}
 
 	public int getIdHighScore() {
 		return idHighScore;
@@ -62,5 +73,13 @@ public class Highscore implements Serializable {
 		this.zombiesKilled = zombiesKilled;
 	}
 	
+	public static int compareTime(Highscore h1, Highscore h2) {
+		String[] h1TimeSplit = h1.getTime().split(":");
+		int h1Time = Integer.valueOf(h1TimeSplit[0] + h1TimeSplit[1]);
+		String[] h2TimeSplit = h2.getTime().split(":");
+		int h2Time = Integer.valueOf(h2TimeSplit[0] + h2TimeSplit[1]);
+		
+		return h1Time - h2Time;
+	}
 
 }

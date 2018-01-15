@@ -135,6 +135,10 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 		}
 
 		inventory.removeItemsWithZeroDurability();
+		
+		if (health == 0) {
+			getRoom().initGameOver();
+		}
 	}
 
 	@Override

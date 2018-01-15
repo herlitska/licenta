@@ -21,14 +21,12 @@ public abstract class GameButton {
 		if (!mouseOnButton) {
 			mouseOnButton = true;
 		}
-
 	}
 
 	public void mouseOutside() {
 		if (mouseOnButton) {
 			mouseOnButton = false;
 		}
-
 	}
 
 	abstract public void mousePressed();

@@ -2,10 +2,11 @@ package ro.herlitska.attila.view;
 
 import java.util.List;
 
-import ro.herlitska.attila.model.GameButton;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.InventoryItem;
+import ro.herlitska.attila.model.GameRoom.GamePhase;
+import ro.herlitska.attila.model.persistence.Highscore;
 
 public interface GameView {
 
@@ -26,9 +27,13 @@ public interface GameView {
 	public void drawHealth(double health);
 
 	public void drawTime(int secondsPassed);
+	
+	public void drawZombieKillCount(int killCount);
 
 	public void drawMainMenu();
-
-	public void drawButtons(List<GameButton> buttons);
+	
+	public void drawGameOverMenu(List<Highscore> highscores);
+	
+	public void setGamePhase(GamePhase gamePhase);
 
 }

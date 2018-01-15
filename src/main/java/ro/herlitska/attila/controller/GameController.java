@@ -14,6 +14,8 @@ public class GameController implements GameEventHandler {
 
 	private boolean mouseMoved = false;
 	private boolean mouseClicked = false;
+	
+	private boolean startButtonPressed = false;
 
 	private MouseButton button;
 
@@ -46,6 +48,11 @@ public class GameController implements GameEventHandler {
 		mouseMoved = true;
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
+	}
+	
+	@Override
+	public void startButtonPressed() {
+		startButtonPressed = true;
 	}
 
 	@Override
@@ -82,6 +89,11 @@ public class GameController implements GameEventHandler {
 		if (mouseClicked) {
 			room.mouseClickedEvent(button, mouseX, mouseY);
 			mouseClicked = false;
+		}
+		
+		if (startButtonPressed) {
+			room.startGame();
+			startButtonPressed = false;
 		}
 
 		room.endOfStepEvent();

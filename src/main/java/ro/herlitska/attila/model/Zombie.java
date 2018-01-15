@@ -12,6 +12,8 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 
 	private static int zombieCount = 0;
 	private static final int MAX_ZOMBIE_COUNT = 50;
+	
+	private static int zombiesKilled = 0;
 
 	private double health = 5;
 
@@ -61,14 +63,16 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 		} else {
 			motion = ZombieMotion.DEATH;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
-			setSolid(false);
+			setSolid(false);			
 			if (!newZombiesSpawned) {
+				zombiesKilled++;
 				zombieCount--;
 				if (zombieCount < MAX_ZOMBIE_COUNT) {
 					newZombiesSpawned = true;
 					spawnZombies();
 				}
 			}
+			
 		}
 		// System.out.println(health);
 		// System.out.println(player.getMotion().toString());
@@ -144,4 +148,13 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 			getRoom().createObject(new Zombie(zombieX, zombieY));
 		}
 	}
+
+	public static int getZombiesKilled() {
+		return zombiesKilled;
+	}
+
+	public static void resetKillCount() {
+		Zombie.zombiesKilled = 0;
+	}	
+	
 }
