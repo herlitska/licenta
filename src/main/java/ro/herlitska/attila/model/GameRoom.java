@@ -19,7 +19,7 @@ public class GameRoom {
 	private List<GameObject> objects;
 	private List<GameObject> objectsToCreate = new ArrayList<>();
 	private List<GameObject> objectsToDestroy = new ArrayList<>();
-	
+
 	private GameView view;
 
 	public enum GamePhase {
@@ -33,16 +33,16 @@ public class GameRoom {
 	public static final double MARGIN_SIZE = 90;
 
 	private GameObject player;
-	
+
 	private AtomicInteger secondsPassed = new AtomicInteger(0);
 	private Timer gameTimer;
-	
+
 	private List<Highscore> highscores = new ArrayList<>();
 
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
 		this.view = view;
-		
+
 		initMainMenu();
 	}
 
@@ -51,13 +51,14 @@ public class GameRoom {
 	}
 
 	public void startGame() {
+		highscores.clear();
 		gamePhase = GamePhase.GAME;
 		view.setGamePhase(GamePhase.GAME);
-				
+
 		secondsPassed.set(0);
-		
+
 		Zombie.resetKillCount();
-		
+
 		Player player = new Player(500, 500);
 
 		player.setPlayerName("JOszef");
@@ -83,7 +84,7 @@ public class GameRoom {
 		objects.add(new Zombie(500, 300));
 
 		objects.forEach(object -> object.setRoom(this));
-		
+
 		for (GameObject object : objects) {
 			if (object instanceof Player) {
 				this.player = object;
@@ -100,11 +101,11 @@ public class GameRoom {
 			}
 		}, 0, 1000);
 	}
-	
+
 	public void initGameOver() {
 		gamePhase = GamePhase.GAME_OVER;
 		view.setGamePhase(gamePhase);
-		
+
 		highscores.add(new Highscore(0, "Sanyi", "01:00", 20));
 		highscores.add(new Highscore(0, "Jóska", "02:00", 18));
 		highscores.add(new Highscore(0, "Gyula", "01:30", 18));
@@ -125,7 +126,7 @@ public class GameRoom {
 		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
 		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
 		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		
+
 		Collections.sort(highscores, (h1, h2) -> {
 			Highscore highscore1 = (Highscore) h1;
 			Highscore highscore2 = (Highscore) h2;
@@ -135,9 +136,9 @@ public class GameRoom {
 				return Highscore.compareTime(highscore2, highscore1);
 			}
 		});
-		
+
 		objectsToDestroy.addAll(objects);
-		
+
 		gameTimer.cancel();
 	}
 
@@ -178,10 +179,10 @@ public class GameRoom {
 		objectsToCreate.forEach(o -> o.setRoom(this));
 		objects.addAll(objectsToCreate);
 		objectsToCreate.clear();
-		
+
 		objects.removeAll(objectsToDestroy);
 		objectsToDestroy.clear();
-		
+
 		objects.forEach(GameObject::endOfStepEvent);
 	}
 
@@ -245,8 +246,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with another object.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with another
+	 * object.
 	 * 
 	 * @param object
 	 * @param x
@@ -268,8 +270,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with
+	 * <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x
