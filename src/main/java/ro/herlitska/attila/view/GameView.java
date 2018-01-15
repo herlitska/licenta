@@ -2,6 +2,7 @@ package ro.herlitska.attila.view;
 
 import java.util.List;
 
+import ro.herlitska.attila.model.GameButton;
 import ro.herlitska.attila.model.GameObject;
 import ro.herlitska.attila.model.GameSprite;
 import ro.herlitska.attila.model.InventoryItem;
@@ -20,10 +21,14 @@ public interface GameView {
 
 	public void drawText(String text, double x, double y, double fontSize);
 
-	public void drawInventory(List<InventoryItem> inventory, int selectedIndex); 
+	public void drawInventory(List<InventoryItem> inventory, int selectedIndex);
 
 	public void drawHealth(double health);
-	
+
 	public void drawTime(int secondsPassed);
+
+	public void drawMainMenu();
+
+	public void drawButtons(List<GameButton> buttons);
 
 }

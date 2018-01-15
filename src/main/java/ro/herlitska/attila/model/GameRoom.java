@@ -7,7 +7,9 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.input.MouseButton;
-
+import net.bytebuddy.matcher.IsNamedMatcher;
+import ro.herlitska.attila.model.weapon.WeaponObject;
+import ro.herlitska.attila.model.weapon.WeaponType;
 import ro.herlitska.attila.util.Utils;
 import ro.herlitska.attila.view.GameView;
 
@@ -16,6 +18,13 @@ public class GameRoom {
 	private List<GameObject> objects;
 	private List<GameObject> objectsToCreate = new ArrayList<>();
 	private GameView view;
+	private List<GameButton> buttons;
+
+	private enum GamePhase {
+		MAIN_MENU, GAME, GAME_OVER
+	}
+
+	private GamePhase gamePhase = GamePhase.MAIN_MENU;
 
 	public static final int ROOM_SIZE = 1024;
 
@@ -28,19 +37,58 @@ public class GameRoom {
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
 		this.view = view;
+		this.buttons = new ArrayList<>();
 		for (GameObject object : objects) {
 			if (object instanceof Player) {
 				player = object;
 				break;
 			}
 		}
-		startGame();
+		initMainMenu();
+	}
+
+	public void initMainMenu() {
+		buttons.add(new GameButton("START GAME", 412.0, 344.0, 200.0, 80.0) {
+
+			@Override
+			public void mousePressed() {
+				startGame();
+			}
+		});
 	}
 
 	public void startGame() {
+		secondsPassed.set(0);
+		buttons.clear();
+		Player player = new Player(500, 500);
+
+		player.setPlayerName("JOszef");
+
+		objects.add(player);
+		objects.add(new WeaponObject(100, 100, WeaponType.KNIFE));
+		objects.add(new WeaponObject(150, 50, WeaponType.KNIFE));
+		objects.add(new WeaponObject(236, 140, WeaponType.HANDGUN));
+		objects.add(new WeaponObject(600, 230, WeaponType.RIFLE));
+		objects.add(new WeaponObject(750, 550, WeaponType.SHOTGUN));
+
+		objects.add(new HealthObject(200, 500, 5, "survivalbar",
+				GameSpriteFactory.getHealthSprite(HealthType.SURVIVALBAR), HealthType.SURVIVALBAR));
+
+		objects.add(new HealthObject(255, 132, 15, "hotdog", GameSpriteFactory.getHealthSprite(HealthType.HOTDOG),
+				HealthType.HOTDOG));
+
+		objects.add(new Zombie(800, 200));
+		objects.add(new Zombie(600, 300));
+		objects.add(new Zombie(700, 300));
+		objects.add(new Zombie(300, 300));
+		objects.add(new Zombie(400, 300));
+		objects.add(new Zombie(500, 300));
+
+		objects.forEach(object -> object.setRoom(this));
+
 		Timer timer = new Timer(true);
 		timer.scheduleAtFixedRate(new TimerTask() {
-			
+
 			@Override
 			public void run() {
 				secondsPassed.incrementAndGet();
@@ -75,18 +123,29 @@ public class GameRoom {
 
 	public void endOfStepEvent() {
 		objectsToCreate.forEach(o -> o.setRoom(this));
-		objects.addAll(objectsToCreate);		
+		objects.addAll(objectsToCreate);
 		objectsToCreate.clear();
 		objects.forEach(GameObject::endOfStepEvent);
 	}
 
 	public void drawEvent() {
-		view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, player.getX(), player.getY());
+		if (gamePhase != GamePhase.GAME) {
+			view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, ROOM_SIZE / 2, ROOM_SIZE / 2);
+		} else {
+			view.preDrawEvent(GameSpriteFactory.getBackgroundSprite(), ROOM_SIZE, player.getX(), player.getY());
+		}
 
-		view.drawObjectSprites(objects);
-		view.drawTime(secondsPassed.get());
-		objects.forEach(GameObject::drawEvent);
-
+		if (gamePhase == GamePhase.GAME) {
+			view.drawObjectSprites(objects);
+			view.drawTime(secondsPassed.get());
+			objects.forEach(GameObject::drawEvent);
+			view.drawButtons(buttons);
+		} else if (gamePhase == GamePhase.MAIN_MENU) {
+			view.drawMainMenu();
+			view.drawButtons(buttons);
+		} else if (gamePhase == GamePhase.GAME_OVER) {
+			view.drawButtons(buttons);
+		}
 		view.postDrawEvent();
 	}
 
@@ -98,12 +157,25 @@ public class GameRoom {
 
 	public void mouseMovedEvent(double mouseX, double mouseY) {
 		objects.forEach(object -> object.mouseMovedEvent(mouseX, mouseY));
+		for (GameButton gameButton : buttons) {
+			if (mouseX > gameButton.getX() && mouseX < gameButton.getX() + gameButton.getWidth()
+					&& mouseY > gameButton.getY() && mouseY < gameButton.getY() + gameButton.getHeight()) {
+				gameButton.mouseInside();
+			} else {
+				gameButton.mouseOutside();
+			}
+		}
 	}
 
-	public void mouseClickedEvent(MouseButton button, double x, double y) {
-		System.out.println("Game Room mouse clicked");
-		System.out.println(button);
-		objects.forEach(object -> object.mouseClickedEvent(button, x, y));
+	public void mouseClickedEvent(MouseButton button, double mouseX, double mouseY) {
+
+		objects.forEach(object -> object.mouseClickedEvent(button, mouseX, mouseY));
+		for (GameButton gameButton : buttons) {
+			if (mouseX > gameButton.getX() && mouseX < gameButton.getX() + gameButton.getWidth()
+					&& mouseY > gameButton.getY() && mouseY < gameButton.getY() + gameButton.getHeight()) {
+				gameButton.mousePressed();
+			}
+		}
 	}
 
 	public void keyReleasedEvent(GameKeyCode key) {
@@ -132,8 +204,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with another object.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with another
+	 * object.
 	 * 
 	 * @param object
 	 * @param x
@@ -155,8 +228,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with
+	 * <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x

@@ -13,6 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javafx.scene.text.TextAlignment;
+import ro.herlitska.attila.model.GameButton;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 import ro.herlitska.attila.model.GameObject;
@@ -27,10 +29,10 @@ public class GameWindow implements GameView {
 
 	public static final int MIN_DEPTH = -100;
 	public static final int MAX_DEPTH = 100;
-	
+
 	public final int WIDTH;
 	public final int HEIGHT;
-	
+
 	private int viewX;
 	private int viewY;
 
@@ -73,11 +75,17 @@ public class GameWindow implements GameView {
 	private class TextToDraw extends Drawable {
 		public final String text;
 		public final double fontSize;
+		public final TextAlignment textAlignment;
 
 		public TextToDraw(String text, double x, double y, double fontSize) {
+			this(text, x, y, fontSize, TextAlignment.LEFT);
+		}
+
+		public TextToDraw(String text, double x, double y, double fontSize, TextAlignment textAlignment) {
 			super(x, y);
 			this.text = text;
 			this.fontSize = fontSize;
+			this.textAlignment = textAlignment;
 		}
 
 		@Override
@@ -126,7 +134,7 @@ public class GameWindow implements GameView {
 	public GameWindow(GameEventHandler eventHandler, int width, int height) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
-		
+
 		rootPane = new Group();
 		canvas = new Canvas(1024, 768);
 		rootPane.getChildren().add(canvas);
@@ -219,7 +227,7 @@ public class GameWindow implements GameView {
 	public void preDrawEvent(GameSprite backgroundSprite, int roomSize, double playerX, double playerY) {
 		viewX = (int) Math.min(Math.max(playerX - WIDTH / 2, 0), roomSize - WIDTH);
 		viewY = (int) Math.min(Math.max(playerY - HEIGHT / 2, 0), roomSize - HEIGHT);
-		
+
 		drawables = new ArrayList<>();
 
 		for (int i = 0; i < roomSize / backgroundSprite.getSize(); i++) {
@@ -255,6 +263,7 @@ public class GameWindow implements GameView {
 						sprite.sprite.getScale());
 			} else if (drawable instanceof TextToDraw) {
 				TextToDraw text = (TextToDraw) drawable;
+				gc.setTextAlign(text.textAlignment);
 				gc.setFill(Color.WHITE);
 				gc.setFont(new Font(null, text.fontSize));
 				gc.fillText(text.text, text.x, text.y);
@@ -271,7 +280,8 @@ public class GameWindow implements GameView {
 	public void drawObjectSprites(java.util.List<GameObject> objects) {
 		for (GameObject object : objects) {
 			if (object.isVisible()) {
-				drawables.add(new SpriteToDraw(object.getSprite(), object.getX() - viewX, object.getY() - viewY, object.getAngle()));
+				drawables.add(new SpriteToDraw(object.getSprite(), object.getX() - viewX, object.getY() - viewY,
+						object.getAngle()));
 			}
 		}
 	}
@@ -340,17 +350,18 @@ public class GameWindow implements GameView {
 		playerHealth = health;
 
 		drawables.add(new RectangleToDraw(610, 20, 40, 380, 0.2, MIN_DEPTH + 1, 255, 255, 255));
-		drawables.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
-				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2
-						? 255 * (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
-						: 255),
-				(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
-						: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
-				0));
+		drawables
+				.add(new RectangleToDraw(610, 20, 40, 380 * (playerHealth / Player.MAX_PLAYER_HEALTH), 0.8, MIN_DEPTH,
+						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+								* (1 - ((playerHealth - Player.MAX_PLAYER_HEALTH / 2) / (Player.MAX_PLAYER_HEALTH / 2)))
+								: 255),
+						(int) (playerHealth >= Player.MAX_PLAYER_HEALTH / 2 ? 255
+								: 255 * (playerHealth / (Player.MAX_PLAYER_HEALTH / 2))),
+						0));
 
 		drawables.add(new TextToDraw(String.valueOf((int) playerHealth), 570, 50, 20));
 	}
-	
+
 	@Override
 	public void drawTime(int secondsPassed) {
 		String minutes = String.format("%02d", secondsPassed / 60);
@@ -358,21 +369,41 @@ public class GameWindow implements GameView {
 		drawables.add(new TextToDraw(minutes + ":" + seconds, 100, 50, 20));
 	}
 
+	@Override
+	public void drawMainMenu() {
+		drawables.add(new RectangleToDraw(312, 214, 300, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
+		drawables.add(new TextToDraw("ZOMBIE HUNTER", 350, 260, 45));
+	}
+
+	@Override
+	public void drawButtons(List<GameButton> buttons) {
+		for (GameButton gameButton : buttons) {
+			drawables.add(new RectangleToDraw(gameButton.getX(), gameButton.getY(), gameButton.getHeight(),
+					gameButton.getWidth(), gameButton.isMouseOnButton() ? 1.0 : 0.5, MIN_DEPTH + 1, 0, 128, 0));
+			drawables.add(new TextToDraw(gameButton.getText(), gameButton.getX(), gameButton.getY(), 20,
+					TextAlignment.CENTER));
+		}
+
+	}
+
 	public Scene getScene() {
 		return scene;
 	}
 
 	/**
-	 * Sets the transform for the GraphicsContext to rotate around a pivot point.
+	 * Sets the transform for the GraphicsContext to rotate around a pivot
+	 * point.
 	 *
 	 * @param gc
 	 *            the graphics context the transform to applied to.
 	 * @param angle
 	 *            the angle of rotation.
 	 * @param px
-	 *            the x pivot co-ordinate for the rotation (in canvas co-ordinates).
+	 *            the x pivot co-ordinate for the rotation (in canvas
+	 *            co-ordinates).
 	 * @param py
-	 *            the y pivot co-ordinate for the rotation (in canvas co-ordinates).
+	 *            the y pivot co-ordinate for the rotation (in canvas
+	 *            co-ordinates).
 	 */
 	private void rotate(double angle, double px, double py) {
 		Rotate r = new Rotate(angle, px, py);
@@ -382,8 +413,8 @@ public class GameWindow implements GameView {
 	/**
 	 * Draws an image on a graphics context.
 	 *
-	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the point:
-	 * (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
+	 * The image is drawn at (tlpx, tlpy) rotated by angle pivoted around the
+	 * point: (tlpx + image.getWidth() / 2, tlpy + image.getHeight() / 2)
 	 *
 	 * @param gc
 	 *            the graphics context the image is to be drawn on.

@@ -50,7 +50,7 @@ public class GameSpriteFactory {
 			return 31 * (31 + (motion == null ? 0 : motion.hashCode())) + (weapon == null ? 0 : weapon.hashCode());
 		}
 	}
-	
+
 	private static List<GameSprite> allSprites = new ArrayList<>();
 
 	private static Map<PlayerSpriteSearchKey, GameSprite> playerSprites = new HashMap<>();
@@ -67,22 +67,21 @@ public class GameSpriteFactory {
 
 	private static GameSprite healthSprite;
 
-	private static GameSprite bulletSprite;	
+	private static GameSprite bulletSprite;
 
-	private static GameSprite wallSprite = new GameSprite("/SeamlessWall/wall128x128.png");	
+	private static GameSprite wallSprite = new GameSprite("/SeamlessWall/wall128x128.png");
 
 	private static GameSprite backgroundSprite = new GameSprite(
 			"/grass_high_view_seamless_texture_2048x2048_by_hhh316-d8g3kir.jpg");
-	
+
 	private final static String PLAYER_SPRITE_PATH = "/Top_Down_Survivor/&wpn/&mtn/survivor-&mtn_&wpn_&num.png";
 
 	private static final String ZOMBIE_SPRITE_PATH = "/zombie_01/&mtn/&mtn_&num.png";
 
 	private static final String HEALTH_SPRITE_PATH = "/OLD/VIDA_&num.png";
-	
+
 	public static void stepEventAllSprites() {
 		for (GameSprite sprite : allSprites) {
-			System.out.println(sprite);
 			sprite.stepEvent();
 		}
 	}
@@ -279,7 +278,7 @@ public class GameSpriteFactory {
 			if (weaponType != WeaponType.FLASHLIGHT) {
 				allSprites.add(sprite);
 			}
-			
+
 			return sprite;
 		}
 
@@ -325,7 +324,7 @@ public class GameSpriteFactory {
 		return bulletSprite;
 	}
 
-	public static GameSprite getWallSprite() {		
+	public static GameSprite getWallSprite() {
 		return wallSprite;
 	}
 

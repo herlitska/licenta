@@ -33,38 +33,10 @@ public class MainApp extends Application {
 
 		List<GameObject> objects = new ArrayList<>();
 
-		Player player = new Player(500, 500);
-
-		player.setPlayerName("JOszef");
-
-		objects.add(player);
-		objects.add(new WeaponObject(100, 100, WeaponType.KNIFE));
-		objects.add(new WeaponObject(150, 50, WeaponType.KNIFE));
-		objects.add(new WeaponObject(236, 140, WeaponType.HANDGUN));
-		objects.add(new WeaponObject(600, 230, WeaponType.RIFLE));
-		objects.add(new WeaponObject(750, 550, WeaponType.SHOTGUN));
-
-		objects.add(new HealthObject(200, 500, 5, "survivalbar",
-				GameSpriteFactory.getHealthSprite(HealthType.SURVIVALBAR), HealthType.SURVIVALBAR));
-
-		objects.add(new HealthObject(255, 132, 15, "hotdog", GameSpriteFactory.getHealthSprite(HealthType.HOTDOG),
-				HealthType.HOTDOG));
-
-		objects.add(new Zombie(800, 200));
-		objects.add(new Zombie(600, 300));
-		objects.add(new Zombie(700, 300));
-		objects.add(new Zombie(300, 300));
-		objects.add(new Zombie(400, 300));
-		objects.add(new Zombie(500, 300));
-
-		GameSprite wallSprite = GameSpriteFactory.getWallSprite();
-
 		ctr = new GameController();
 		GameWindow view = new GameWindow(ctr, 1024, 768);
 
 		GameRoom room = new GameRoom(objects, view);
-
-		objects.forEach(object -> object.setRoom(room));
 
 		ctr.setRoom(room);
 

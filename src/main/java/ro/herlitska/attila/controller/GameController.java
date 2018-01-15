@@ -62,13 +62,13 @@ public class GameController implements GameEventHandler {
 				keysReleased.put(key, false);
 			}
 		});
-		
+
 		// step
 		room.stepEvent();
 
 		// collision
 		room.checkCollision();
-		
+
 		room.checkAttackRange();
 
 		// draw
@@ -83,7 +83,7 @@ public class GameController implements GameEventHandler {
 			room.mouseClickedEvent(button, mouseX, mouseY);
 			mouseClicked = false;
 		}
-		
+
 		room.endOfStepEvent();
 	}
 
@@ -92,7 +92,8 @@ public class GameController implements GameEventHandler {
 	}
 
 	@Override
-	public void mouseClicked(MouseButton button, double x, double y) { // my addition
+	public void mouseClicked(MouseButton button, double x, double y) { // my
+																		// addition
 		mouseClicked = true;
 		this.button = button;
 		this.mouseX = x;
