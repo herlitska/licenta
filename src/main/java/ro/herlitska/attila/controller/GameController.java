@@ -16,6 +16,9 @@ public class GameController implements GameEventHandler {
 	private boolean mouseClicked = false;
 	
 	private boolean startButtonPressed = false;
+	
+	private boolean errorOkPressed = false;
+	private boolean playAgainPressed = false;
 
 	private MouseButton button;
 
@@ -25,6 +28,8 @@ public class GameController implements GameEventHandler {
 	private Map<GameKeyCode, Boolean> keysDown = new HashMap<>();
 
 	private Map<GameKeyCode, Boolean> keysReleased = new HashMap<>();
+	
+	private String characterTyped = "";
 
 	public GameController() {
 		for (GameKeyCode keyCode : GameKeyCode.values()) {
@@ -42,6 +47,11 @@ public class GameController implements GameEventHandler {
 		keysDown.put(keyCode, false);
 		keysReleased.put(keyCode, true);
 	}
+	
+	@Override
+	public void keyTyped(String character) {
+		characterTyped = character;
+	}
 
 	@Override
 	public void mouseMoved(double mouseX, double mouseY) {
@@ -53,6 +63,16 @@ public class GameController implements GameEventHandler {
 	@Override
 	public void startButtonPressed() {
 		startButtonPressed = true;
+	}
+	
+	@Override
+	public void playAgainPressed() {
+		playAgainPressed = true;
+	}
+	
+	@Override
+	public void errorOkPressed() {
+		errorOkPressed = true;
 	}
 
 	@Override
@@ -69,6 +89,11 @@ public class GameController implements GameEventHandler {
 				keysReleased.put(key, false);
 			}
 		});
+		
+		if (!characterTyped.isEmpty()) {
+			room.keyTypedEvent(characterTyped);
+			characterTyped = "";
+		}
 
 		// step
 		room.stepEvent();
@@ -94,6 +119,16 @@ public class GameController implements GameEventHandler {
 		if (startButtonPressed) {
 			room.startGame();
 			startButtonPressed = false;
+		}
+		
+		if (errorOkPressed) {
+			room.initGameOver();
+			errorOkPressed = false;
+		}
+		
+		if (playAgainPressed) {
+			room.playAgainPressed();
+			playAgainPressed = false;
 		}
 
 		room.endOfStepEvent();

@@ -2,13 +2,16 @@ package ro.herlitska.attila.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.input.MouseButton;
+import ro.herlitska.attila.model.persistence.DBConnectionException;
 import ro.herlitska.attila.model.persistence.Highscore;
+import ro.herlitska.attila.model.persistence.HighscoreDAO;
 import ro.herlitska.attila.model.weapon.WeaponObject;
 import ro.herlitska.attila.model.weapon.WeaponType;
 import ro.herlitska.attila.util.Utils;
@@ -23,7 +26,7 @@ public class GameRoom {
 	private GameView view;
 
 	public enum GamePhase {
-		MAIN_MENU, GAME, GAME_OVER
+		MAIN_MENU, GAME, GAME_OVER, ERROR_MSG
 	}
 
 	private GamePhase gamePhase = GamePhase.MAIN_MENU;
@@ -38,6 +41,12 @@ public class GameRoom {
 	private Timer gameTimer;
 
 	private List<Highscore> highscores = new ArrayList<>();
+	private StringBuilder currentPlayerHsName = new StringBuilder();
+	private int currentPlayerHsIndex = -1;
+	private Highscore newHighscore;
+	private static final int MAX_PLAYER_NAME_LENGTH = 16;
+
+	private String errorMessage;
 
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
@@ -102,45 +111,98 @@ public class GameRoom {
 		}, 0, 1000);
 	}
 
+	public void playAgainPressed() {
+		if (gamePhase == GamePhase.GAME_OVER) {
+			if (currentPlayerHsIndex >= 0) {
+				if (currentPlayerHsName.length() > 0) {
+					try {
+						HighscoreDAO.insertNewHighscore(newHighscore);
+						startGame();
+					} catch (DBConnectionException e) {
+						initErrorMessage("Failed to add the new highscore.\n The database is unreachable.");
+					}
+				} else {
+					initErrorMessage("Please enter your name\nbefore submitting your highscore.");
+				}
+			} else {
+				startGame();
+			}
+		}
+	}
+
 	public void initGameOver() {
 		gamePhase = GamePhase.GAME_OVER;
 		view.setGamePhase(gamePhase);
 
-		highscores.add(new Highscore(0, "Sanyi", "01:00", 20));
-		highscores.add(new Highscore(0, "Jóska", "02:00", 18));
-		highscores.add(new Highscore(0, "Gyula", "01:30", 18));
-		highscores.add(new Highscore(0, "Gazsi", "01:50", 17));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Sanyi", "01:00", 20));
+		// highscores.add(new Highscore(0, "Jóska", "02:00", 18));
+		// highscores.add(new Highscore(0, "Gyula", "01:30", 18));
+		// highscores.add(new Highscore(0, "Gazsi", "01:50", 17));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
+		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
 
-		Collections.sort(highscores, (h1, h2) -> {
-			Highscore highscore1 = (Highscore) h1;
-			Highscore highscore2 = (Highscore) h2;
-			if (highscore1.getZombiesKilled() != highscore2.getZombiesKilled()) {
-				return highscore2.getZombiesKilled() - highscore1.getZombiesKilled();
-			} else {
-				return Highscore.compareTime(highscore2, highscore1);
-			}
-		});
+		gameTimer.cancel();
+		String time = Utils.secondsToString(getSecondsPassed());
 
 		objectsToDestroy.addAll(objects);
 
-		gameTimer.cancel();
+		highscores.clear();
+		try {
+			highscores = HighscoreDAO.getHighscores();
+			currentPlayerHsName = new StringBuilder();
+			currentPlayerHsIndex = -1;
+			newHighscore = new Highscore(0, "", time, Zombie.getZombiesKilled());
+			Comparator<Highscore> hsComparator = (h1, h2) -> {
+				Highscore highscore1 = (Highscore) h1;
+				Highscore highscore2 = (Highscore) h2;
+				if (highscore1.getZombiesKilled() != highscore2.getZombiesKilled()) {
+					return highscore2.getZombiesKilled() - highscore1.getZombiesKilled();
+				} else {
+					return Highscore.compareTime(highscore2, highscore1);
+				}
+			};
+			boolean isInTop20 = false;
+			for (Highscore hs : highscores) {
+				if (hsComparator.compare(newHighscore, hs) > 0) {
+					isInTop20 = true;
+					break;
+				}
+			}
+			if (isInTop20) {
+				highscores.add(newHighscore);
+				Collections.sort(highscores, hsComparator);
+				for (int i = 0; i < highscores.size(); i++) {
+					if (highscores.get(i).getIdHighScore() == 0) {
+						currentPlayerHsIndex = i;
+						break;
+					}
+				}
+				HighscoreDAO.deleteHighscore(highscores.get(highscores.size() - 1).getIdHighScore());
+			}
+		} catch (DBConnectionException e) {
+			initErrorMessage("Cannot reach highscore database.\nHighscore will not be submitted.");
+		}
 	}
+
+	private void initErrorMessage(String message) {
+		gamePhase = GamePhase.ERROR_MSG;
+		view.setGamePhase(gamePhase);
+		errorMessage = message;
+	}	
 
 	public void createObject(GameObject object) {
 		objectsToCreate.add(object);
@@ -201,7 +263,9 @@ public class GameRoom {
 		} else if (gamePhase == GamePhase.MAIN_MENU) {
 			view.drawMainMenu();
 		} else if (gamePhase == GamePhase.GAME_OVER) {
-			view.drawGameOverMenu(highscores);
+			view.drawGameOverMenu(highscores, currentPlayerHsIndex);
+		} else if (gamePhase == GamePhase.ERROR_MSG) {
+			view.drawErrorMessage(errorMessage);
 		}
 		view.postDrawEvent();
 	}
@@ -209,6 +273,19 @@ public class GameRoom {
 	public void keyPressedEvent(GameKeyCode key) {
 		for (GameObject object : objects) {
 			object.keyPressedEvent(key);
+		}
+	}
+
+	public void keyTypedEvent(String character) {
+		if (gamePhase == GamePhase.GAME_OVER) {
+			if (character.equals("\n")) {
+				playAgainPressed();
+				return;
+			}
+			if (currentPlayerHsName.length() < MAX_PLAYER_NAME_LENGTH) {
+				currentPlayerHsName.append(character);
+				highscores.get(currentPlayerHsIndex).setPlayerName(currentPlayerHsName.toString());
+			}
 		}
 	}
 
@@ -246,9 +323,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with another
-	 * object.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with another object.
 	 * 
 	 * @param object
 	 * @param x
@@ -270,9 +346,8 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at (
-	 * <code>x</code>, <code>y</code>) would be in collision with
-	 * <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
+	 * <code>y</code>) would be in collision with <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x
@@ -288,10 +363,6 @@ public class GameRoom {
 				y) < object.getSprite().getBoundingCircleRadius() * object.getSprite().getScale()
 						+ other.getSprite().getBoundingCircleRadius() * other.getSprite().getScale()
 				&& !object.equals(other) && (!onlySolid || (object.isSolid() && other.isSolid()))) {
-			if (object instanceof Player || other instanceof Player) {
-				System.out.println(
-						"COLLISION :" + " " + object.getClass().getName() + " & " + other.getClass().getName());
-			}
 			return true;
 		} else
 			return false;

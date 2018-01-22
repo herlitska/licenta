@@ -32,7 +32,9 @@ public interface GameView {
 
 	public void drawMainMenu();
 	
-	public void drawGameOverMenu(List<Highscore> highscores);
+	public void drawGameOverMenu(List<Highscore> highscores, int currentPlayerIndex);
+	
+	public void drawErrorMessage(String message);
 	
 	public void setGamePhase(GamePhase gamePhase);
 

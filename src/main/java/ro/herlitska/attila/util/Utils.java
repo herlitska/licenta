@@ -2,22 +2,13 @@ package ro.herlitska.attila.util;
 
 public class Utils {
 
-//	private final static String PLAYER_FOLDER_PATH = "/Top_Down_Survivor/&wpn/&mtn";
-
 	public static double dist(double x1, double y1, double x2, double y2) {
 		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
-
-//	public static List<String> getPlayerSpritePath(PlayerMotion motion, PlayerWeapon weapon) {
-//		String path = PLAYER_FOLDER_PATH.replace("&wpn", weapon.name().toLowerCase()).replace("&mtn",
-//				motion.name().toLowerCase());
-//		System.out.println(path);
-//		File folder = new File(path);
-//		File[] listOfFiles = folder.listFiles();
-//		List<String> spritePaths = new ArrayList<>();
-//		for (int i = 0; i < listOfFiles.length; i++) {
-//			spritePaths.add(path + "/" + listOfFiles[i].getName());
-//		}
-//		return spritePaths;
-//	}
+	
+	public static String secondsToString(int seconds) {
+		String minutesStr = String.format("%02d", seconds / 60);
+		String secondsStr = String.format("%02d", seconds % 60);
+		return minutesStr + ":" + secondsStr;
+	}
 }

@@ -26,6 +26,7 @@ import ro.herlitska.attila.model.Player;
 import ro.herlitska.attila.model.persistence.Highscore;
 import ro.herlitska.attila.model.GameRoom.GamePhase;
 import ro.herlitska.attila.model.weapon.WeaponItem;
+import ro.herlitska.attila.util.Utils;
 
 public class GameWindow implements GameView {
 
@@ -133,6 +134,7 @@ public class GameWindow implements GameView {
 	private List<GameButton> buttons = new ArrayList<>();
 	private GameButton startButton;
 	private GameButton playAgainButton;
+	private GameButton errorOkButton;
 
 	// private List<SpriteToDraw> spritesToDraw;
 	private List<Drawable> drawables;
@@ -181,7 +183,9 @@ public class GameWindow implements GameView {
 			case DIGIT4:
 				eventHandler.keyPressed(GameKeyCode.NUM_4);
 				break;
-
+			case ENTER:
+				eventHandler.keyPressed(GameKeyCode.ENTER);
+				break;
 			default:
 				break;
 			}
@@ -216,6 +220,10 @@ public class GameWindow implements GameView {
 			default:
 				break;
 			}
+		});
+
+		scene.setOnKeyTyped(e -> {
+			eventHandler.keyTyped(e.getCharacter());
 		});
 
 		scene.setOnMouseMoved(e -> {
@@ -257,6 +265,14 @@ public class GameWindow implements GameView {
 				eventHandler.startButtonPressed();
 			}
 		};
+
+		errorOkButton = new GameButton("OK", 412.0, 380.0, 200.0, 80.0) {
+
+			@Override
+			public void mousePressed() {
+				eventHandler.errorOkPressed();
+			}
+		};
 	}
 
 	@Override
@@ -268,6 +284,8 @@ public class GameWindow implements GameView {
 
 		} else if (gamePhase == GamePhase.GAME_OVER) {
 			buttons.add(playAgainButton);
+		} else if (gamePhase == GamePhase.ERROR_MSG) {
+			buttons.add(errorOkButton);
 		}
 	}
 
@@ -410,9 +428,7 @@ public class GameWindow implements GameView {
 
 	@Override
 	public void drawTime(int secondsPassed) {
-		String minutes = String.format("%02d", secondsPassed / 60);
-		String seconds = String.format("%02d", secondsPassed % 60);
-		drawables.add(new TextToDraw(minutes + ":" + seconds, 100, 50, 20));
+		drawables.add(new TextToDraw(Utils.secondsToString(secondsPassed), 100, 50, 20));
 	}
 
 	@Override
@@ -428,15 +444,26 @@ public class GameWindow implements GameView {
 	}
 
 	@Override
-	public void drawGameOverMenu(List<Highscore> highscores) {
+	public void drawGameOverMenu(List<Highscore> highscores, int currentPlayerIndex) {
 		drawables.add(new RectangleToDraw(312, 64, 600, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
 		drawables.add(new TextToDraw("GAME OVER", 512, 120, 45, TextAlignment.CENTER));
+		drawables.add(new TextToDraw("PLAYER NAME", 360, 150, 16));
+		drawables.add(new TextToDraw("TIME", 580, 150, 16));
+		drawables.add(new TextToDraw("KILLED", 650, 150, 16));
 		for (int i = 0; i < highscores.size(); i++) {
-			drawables.add(new TextToDraw((i + 1) + ".", 330, 150 + i * 20, 16));
-			drawables.add(new TextToDraw(highscores.get(i).getPlayerName(), 360, 150 + i * 20, 16));
-			drawables.add(new TextToDraw(highscores.get(i).getTime(), 580, 150 + i * 20, 16));
-			drawables.add(new TextToDraw(String.valueOf(highscores.get(i).getZombiesKilled()), 650, 150 + i * 20, 16));
+			drawables.add(new TextToDraw((i + 1) + ".", 330, 170 + i * 18, 14));
+			drawables.add(new TextToDraw(highscores.get(i).getPlayerName() + (i == currentPlayerIndex ? "|" : ""), 360,
+					170 + i * 18, 14));
+			drawables.add(new TextToDraw(highscores.get(i).getTime(), 580, 170 + i * 18, 14));
+			drawables.add(new TextToDraw(String.valueOf(highscores.get(i).getZombiesKilled()), 650, 170 + i * 18, 14));
 		}
+		drawButtons();
+	}
+
+	@Override
+	public void drawErrorMessage(String message) {
+		drawables.add(new RectangleToDraw(362, 284, 200, 300, 0.6, MIN_DEPTH + 1, 255, 255, 255));
+		drawables.add(new TextToDraw(message, 512, 310, 16, TextAlignment.CENTER));
 		drawButtons();
 	}
 
