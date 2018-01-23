@@ -177,7 +177,7 @@ public class GameRoom {
 			};
 			boolean isInTop20 = false;
 			for (Highscore hs : highscores) {
-				if (hsComparator.compare(newHighscore, hs) > 0) {
+				if (hsComparator.compare(newHighscore, hs) < 0) {
 					isInTop20 = true;
 					break;
 				}
@@ -191,7 +191,17 @@ public class GameRoom {
 						break;
 					}
 				}
+
 				HighscoreDAO.deleteHighscore(highscores.get(highscores.size() - 1).getIdHighScore());
+			} else if (highscores.size() < 20) {
+				highscores.add(newHighscore);
+				Collections.sort(highscores, hsComparator);
+				for (int i = 0; i < highscores.size(); i++) {
+					if (highscores.get(i).getIdHighScore() == 0) {
+						currentPlayerHsIndex = i;
+						break;
+					}
+				}
 			}
 		} catch (DBConnectionException e) {
 			initErrorMessage("Cannot reach highscore database.\nHighscore will not be submitted.");
@@ -202,7 +212,7 @@ public class GameRoom {
 		gamePhase = GamePhase.ERROR_MSG;
 		view.setGamePhase(gamePhase);
 		errorMessage = message;
-	}	
+	}
 
 	public void createObject(GameObject object) {
 		objectsToCreate.add(object);
@@ -278,7 +288,7 @@ public class GameRoom {
 
 	public void keyTypedEvent(String character) {
 		if (gamePhase == GamePhase.GAME_OVER) {
-			if (character.equals("\n")) {
+			if (character.equals("\r")) {
 				playAgainPressed();
 				return;
 			}
@@ -323,8 +333,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with another object.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with another
+	 * object.
 	 * 
 	 * @param object
 	 * @param x
@@ -346,8 +357,9 @@ public class GameRoom {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>object</code> placed at ( <code>x</code>,
-	 * <code>y</code>) would be in collision with <code>other</code>.
+	 * Returns <code>true</code> if <code>object</code> placed at (
+	 * <code>x</code>, <code>y</code>) would be in collision with
+	 * <code>other</code>.
 	 * 
 	 * @param object
 	 * @param x

@@ -14,7 +14,7 @@ public class DBConnection {
 
 	static EntityManager getEntityManager() throws PersistenceException {
 		if (entityManagerFactory == null) {
-			entityManagerFactory = Persistence.createEntityManagerFactory("db");
+			entityManagerFactory = Persistence.createEntityManagerFactory("Licenta");
 
 		}
 		EntityManager entityManager = entityManagerFactory.createEntityManager();

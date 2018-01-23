@@ -16,6 +16,7 @@ public class HighscoreDAO {
 			manager = DBConnection.getEntityManager();
 			highscores = manager.createQuery("SELECT h FROM Highscore h", Highscore.class).getResultList();
 		} catch (PersistenceException e) {
+			e.printStackTrace();
 			throw new DBConnectionException();
 
 		} finally {
