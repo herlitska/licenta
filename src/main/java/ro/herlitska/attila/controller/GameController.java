@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javafx.scene.input.MouseButton;
 import ro.herlitska.attila.model.GameRoom;
+import ro.herlitska.attila.model.ScrollDirection;
 import ro.herlitska.attila.model.GameEventHandler;
 import ro.herlitska.attila.model.GameKeyCode;
 
@@ -19,6 +20,9 @@ public class GameController implements GameEventHandler {
 	
 	private boolean errorOkPressed = false;
 	private boolean playAgainPressed = false;
+	
+	private boolean scrolled = false;
+	private ScrollDirection scrollDirection;
 
 	private MouseButton button;
 
@@ -74,6 +78,12 @@ public class GameController implements GameEventHandler {
 	public void errorOkPressed() {
 		errorOkPressed = true;
 	}
+	
+	@Override
+	public void scroll(ScrollDirection direction) {
+		scrolled = true;
+		scrollDirection = direction;
+	}
 
 	@Override
 	public void step() {
@@ -122,13 +132,18 @@ public class GameController implements GameEventHandler {
 		}
 		
 		if (errorOkPressed) {
-			room.initGameOver();
+			room.errorOkPressed();
 			errorOkPressed = false;
 		}
 		
 		if (playAgainPressed) {
 			room.playAgainPressed();
 			playAgainPressed = false;
+		}
+		
+		if (scrolled) {
+			room.scrollEvent(scrollDirection);
+			scrolled = false;
 		}
 
 		room.endOfStepEvent();

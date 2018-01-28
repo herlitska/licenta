@@ -26,12 +26,12 @@ public class GameRoom {
 	private GameView view;
 
 	public enum GamePhase {
-		MAIN_MENU, GAME, GAME_OVER, ERROR_MSG
+		MAIN_MENU, GAME, GAME_OVER, GAME_OVER_DB_ERROR, ERROR_MSG
 	}
 
 	private GamePhase gamePhase = GamePhase.MAIN_MENU;
 
-	public static final int ROOM_SIZE = 1024;
+	public static final int ROOM_SIZE = 2048;
 
 	public static final double MARGIN_SIZE = 90;
 
@@ -47,6 +47,7 @@ public class GameRoom {
 	private static final int MAX_PLAYER_NAME_LENGTH = 16;
 
 	private String errorMessage;
+	private GamePhase phaseAfterError;
 
 	public GameRoom(List<GameObject> objects, GameView view) {
 		this.objects = objects;
@@ -79,18 +80,15 @@ public class GameRoom {
 		objects.add(new WeaponObject(600, 230, WeaponType.RIFLE));
 		objects.add(new WeaponObject(750, 550, WeaponType.SHOTGUN));
 
-		objects.add(new HealthObject(200, 500, 5, "survivalbar",
-				GameSpriteFactory.getHealthSprite(HealthType.SURVIVALBAR), HealthType.SURVIVALBAR));
+		objects.add(new HealthObject(200, 500, HealthType.SURVIVALBAR));
+		objects.add(new HealthObject(255, 132, HealthType.HOTDOG));
 
-		objects.add(new HealthObject(255, 132, 15, "hotdog", GameSpriteFactory.getHealthSprite(HealthType.HOTDOG),
-				HealthType.HOTDOG));
-
-		objects.add(new Zombie(800, 200));
-		objects.add(new Zombie(600, 300));
-		objects.add(new Zombie(700, 300));
-		objects.add(new Zombie(300, 300));
-		objects.add(new Zombie(400, 300));
-		objects.add(new Zombie(500, 300));
+		objects.add(new Zombie(800, 200, 0.5, 1));
+		objects.add(new Zombie(600, 300, 0.5, 1.5));
+		objects.add(new Zombie(700, 300, 0.5, 2.0));
+		objects.add(new Zombie(300, 300, 0.5, 2.5));
+		objects.add(new Zombie(400, 300, 0.5, 3.0));
+		objects.add(new Zombie(500, 300, 0.5, 5.0));
 
 		objects.forEach(object -> object.setRoom(this));
 
@@ -119,41 +117,25 @@ public class GameRoom {
 						HighscoreDAO.insertNewHighscore(newHighscore);
 						startGame();
 					} catch (DBConnectionException e) {
-						initErrorMessage("Failed to add the new highscore.\n The database is unreachable.");
+						initErrorMessage("Failed to add the new highscore.\n The database is unreachable.", GamePhase.GAME_OVER_DB_ERROR);
 					}
 				} else {
-					initErrorMessage("Please enter your name\nbefore submitting your highscore.");
+					initErrorMessage("Please enter your name\nbefore submitting your highscore.", GamePhase.GAME_OVER);
 				}
 			} else {
 				startGame();
 			}
 		}
 	}
+	
+	public void initGameOverDbError() {
+		gamePhase = GamePhase.GAME_OVER_DB_ERROR;
+		view.setGamePhase(GamePhase.GAME_OVER_DB_ERROR);
+	}
 
 	public void initGameOver() {
 		gamePhase = GamePhase.GAME_OVER;
 		view.setGamePhase(gamePhase);
-
-		// highscores.add(new Highscore(0, "Sanyi", "01:00", 20));
-		// highscores.add(new Highscore(0, "Jóska", "02:00", 18));
-		// highscores.add(new Highscore(0, "Gyula", "01:30", 18));
-		// highscores.add(new Highscore(0, "Gazsi", "01:50", 17));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
-		// highscores.add(new Highscore(0, "Bélus", "01:01", 16));
 
 		gameTimer.cancel();
 		String time = Utils.secondsToString(getSecondsPassed());
@@ -204,14 +186,15 @@ public class GameRoom {
 				}
 			}
 		} catch (DBConnectionException e) {
-			initErrorMessage("Cannot reach highscore database.\nHighscore will not be submitted.");
+			initErrorMessage("Cannot reach highscore database.\nHighscore will not be submitted.", GamePhase.GAME_OVER_DB_ERROR);
 		}
 	}
 
-	private void initErrorMessage(String message) {
+	private void initErrorMessage(String message, GamePhase nextPhase) {
 		gamePhase = GamePhase.ERROR_MSG;
 		view.setGamePhase(gamePhase);
 		errorMessage = message;
+		phaseAfterError = nextPhase;
 	}
 
 	public void createObject(GameObject object) {
@@ -274,6 +257,8 @@ public class GameRoom {
 			view.drawMainMenu();
 		} else if (gamePhase == GamePhase.GAME_OVER) {
 			view.drawGameOverMenu(highscores, currentPlayerHsIndex);
+		} else if (gamePhase == GamePhase.GAME_OVER_DB_ERROR) {
+			view.drawGameOverMenuDbError();
 		} else if (gamePhase == GamePhase.ERROR_MSG) {
 			view.drawErrorMessage(errorMessage);
 		}
@@ -317,6 +302,18 @@ public class GameRoom {
 		for (GameObject object : objects) {
 			object.keyDownEvent(key);
 		}
+	}
+	
+	public void errorOkPressed() {
+		if (phaseAfterError == GamePhase.GAME_OVER) {
+			initGameOver();
+		} else if (phaseAfterError == GamePhase.GAME_OVER_DB_ERROR) {
+			initGameOverDbError();
+		}
+	}
+	
+	public void scrollEvent(ScrollDirection direction) {
+		objects.forEach(object -> object.scrollEvent(direction));
 	}
 
 	public void checkCollision() {

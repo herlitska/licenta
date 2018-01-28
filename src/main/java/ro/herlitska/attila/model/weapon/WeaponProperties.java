@@ -12,28 +12,28 @@ public class WeaponProperties {
 		switch (weaponType) {
 		case HANDGUN:
 			damage = 1;
-			durability = 10;
+			durability = 15;
 			name = "Handgun";
 			attackDelay = 40;
 			this.weaponType = weaponType;
 			break;
 		case KNIFE:
-			damage = 1;
-			durability = 10;
+			damage = 2;
+			durability = 20;
 			name = "Kitchen Knife";
-			attackDelay = 40;
+			attackDelay = 20;
 			this.weaponType = weaponType;
 			break;
 		case RIFLE:
-			damage = 1;
-			durability = 10;
+			damage = 2;
+			durability = 20;
 			name = "Rifle";
 			attackDelay = 10;
 			this.weaponType = weaponType;
 			break;
 		case SHOTGUN:
-			damage = 1;
-			durability = 10;
+			damage = 5;
+			durability = 5;
 			name = "Shotgun";
 			attackDelay = 80;
 			this.weaponType = weaponType;
@@ -42,7 +42,7 @@ public class WeaponProperties {
 		    damage = 1;
             durability = 10;
             name = "Flashlight";
-            attackDelay = 40;
+            attackDelay = 20;
             this.weaponType = weaponType;
             break;
 		default:

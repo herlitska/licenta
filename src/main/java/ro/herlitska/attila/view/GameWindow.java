@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.plaf.metal.MetalBorders.PaletteBorder;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -23,6 +25,7 @@ import ro.herlitska.attila.model.GameSpriteFactory;
 import ro.herlitska.attila.model.HealthItem;
 import ro.herlitska.attila.model.InventoryItem;
 import ro.herlitska.attila.model.Player;
+import ro.herlitska.attila.model.ScrollDirection;
 import ro.herlitska.attila.model.persistence.Highscore;
 import ro.herlitska.attila.model.GameRoom.GamePhase;
 import ro.herlitska.attila.model.weapon.WeaponItem;
@@ -38,6 +41,8 @@ public class GameWindow implements GameView {
 
 	private int viewX;
 	private int viewY;
+	private double mouseX = 0;
+	private double mouseY = 0;
 
 	private abstract class Drawable {
 		public final double x;
@@ -227,7 +232,9 @@ public class GameWindow implements GameView {
 		});
 
 		scene.setOnMouseMoved(e -> {
-			eventHandler.mouseMoved(e.getSceneX() + viewX, e.getSceneY() + viewY);
+			mouseX = e.getSceneX();
+			mouseY = e.getSceneY();
+			eventHandler.mouseMoved(getMouseX(), getMouseY());
 			for (GameButton gameButton : buttons) {
 				if (e.getSceneX() > gameButton.getX() && e.getSceneX() < gameButton.getX() + gameButton.getWidth()
 						&& e.getSceneY() > gameButton.getY()
@@ -240,7 +247,7 @@ public class GameWindow implements GameView {
 		});
 
 		scene.setOnMousePressed(e -> {
-			eventHandler.mouseClicked(e.getButton(), e.getSceneX(), e.getSceneY());
+			eventHandler.mouseClicked(e.getButton(), getMouseX(), getMouseY());
 			for (GameButton gameButton : buttons) {
 				if (e.getSceneX() > gameButton.getX() && e.getSceneX() < gameButton.getX() + gameButton.getWidth()
 						&& e.getSceneY() > gameButton.getY()
@@ -248,6 +255,11 @@ public class GameWindow implements GameView {
 					gameButton.mousePressed();
 				}
 			}
+		});
+		
+		scene.setOnScroll(e -> {
+			ScrollDirection scrollDirection = e.getDeltaY() > 0 ? ScrollDirection.UP : ScrollDirection.DOWN;
+			eventHandler.scroll(scrollDirection);
 		});
 
 		startButton = new GameButton("START GAME", 412.0, 344.0, 200.0, 80.0) {
@@ -283,6 +295,12 @@ public class GameWindow implements GameView {
 		} else if (gamePhase == GamePhase.GAME) {
 
 		} else if (gamePhase == GamePhase.GAME_OVER) {
+			playAgainButton.setX(412.0);
+			playAgainButton.setY(560.0);
+			buttons.add(playAgainButton);
+		} else if (gamePhase == GamePhase.GAME_OVER_DB_ERROR) {
+			playAgainButton.setX(412.0);
+			playAgainButton.setY(430.0);
 			buttons.add(playAgainButton);
 		} else if (gamePhase == GamePhase.ERROR_MSG) {
 			buttons.add(errorOkButton);
@@ -354,6 +372,16 @@ public class GameWindow implements GameView {
 	@Override
 	public void draw(GameSprite sprite, double x, double y) {
 		drawables.add(new SpriteToDraw(sprite, x, y));
+	}
+	
+	@Override
+	public double getMouseX() {
+		return viewX + mouseX;		
+	}
+	
+	@Override
+	public double getMouseY() {
+		return viewY + mouseY;		
 	}
 
 	public Group getRootPane() {
@@ -459,12 +487,24 @@ public class GameWindow implements GameView {
 		}
 		drawButtons();
 	}
+	
+	@Override
+	public void drawGameOverMenuDbError() {
+		drawables.add(new RectangleToDraw(312, 234, 300, 400, 0.6, MIN_DEPTH + 2, 255, 255, 255));
+		drawables.add(new TextToDraw("GAME OVER", 512, 300, 45, TextAlignment.CENTER));
+		drawButtons();
+	}
 
 	@Override
 	public void drawErrorMessage(String message) {
 		drawables.add(new RectangleToDraw(362, 284, 200, 300, 0.6, MIN_DEPTH + 1, 255, 255, 255));
 		drawables.add(new TextToDraw(message, 512, 310, 16, TextAlignment.CENTER));
 		drawButtons();
+	}
+	
+	@Override
+	public boolean inView(double x, double y) {
+		return (x >= viewX && x <= viewX + WIDTH && y >= viewY && y <= viewY + HEIGHT);
 	}
 
 	private void drawButtons() {
@@ -478,6 +518,14 @@ public class GameWindow implements GameView {
 
 	public Scene getScene() {
 		return scene;
+	}	
+
+	public int getViewX() {
+		return viewX;
+	}
+
+	public int getViewY() {
+		return viewY;
 	}
 
 	/**

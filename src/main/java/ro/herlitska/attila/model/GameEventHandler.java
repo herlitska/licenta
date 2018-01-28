@@ -19,6 +19,8 @@ public interface GameEventHandler {
 	public void playAgainPressed();
 	
 	public void errorOkPressed();
+	
+	public void scroll(ScrollDirection direction);
 
 	public void step();
 }

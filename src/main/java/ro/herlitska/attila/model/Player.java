@@ -81,6 +81,18 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 		public void draw() {
 			getRoom().getView().drawInventory(inventory, currentItemIndex);
 		}
+		
+		public void moveToNext() {
+			switchToItem((currentItemIndex + 1) % INVENTORY_SIZE);
+		}
+		
+		public void moveToPrevious() {
+			if (currentItemIndex - 1 >= 0) {
+				switchToItem(currentItemIndex - 1);
+			} else {
+				switchToItem(INVENTORY_SIZE - 1);
+			}
+		}
 	}
 
 	private PlayerInventory inventory = new PlayerInventory();
@@ -93,9 +105,6 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 
 	private PlayerMotion motion = PlayerMotion.IDLE;
 	private WeaponType weapon = WeaponType.KNIFE;
-
-	private double mouseX = 0;
-	private double mouseY = 0;
 
 	private List<Damagable> damagablesInRange = new ArrayList<>();
 
@@ -135,7 +144,7 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 		}
 
 		inventory.removeItemsWithZeroDurability();
-		
+
 		if (health == 0) {
 			getRoom().initGameOver();
 		}
@@ -209,6 +218,7 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 			WeaponObject weaponObject = (WeaponObject) other;
 			if (inventory.addItem(WeaponItem.createWeaponItem(weaponObject.getProperties()))) {
 				other.destroy();
+				getRoom().createObject(WeaponObject.getNewRandomWeaponObject(getX(), getY()));
 			}
 		}
 
@@ -218,6 +228,7 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 					healthObject.getHealthType(),
 					GameSpriteFactory.getInventoryHealthSprite(healthObject.getHealthType())))) {
 				other.destroy();
+				getRoom().createObject(HealthObject.getNewRandomHealthObject(getX(), getY()));
 			}
 		}
 	}
@@ -235,8 +246,6 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 
 	@Override
 	public void mouseMovedEvent(double mouseX, double mouseY) {
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
 		setAngle(calcAngleBasedOnMouse());
 	}
 
@@ -272,6 +281,15 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 			}
 		}
 	}
+	
+	@Override
+	public void scrollEvent(ScrollDirection direction) {
+		if (direction == ScrollDirection.UP) {
+			inventory.moveToNext();
+		} else if (direction == ScrollDirection.DOWN) {
+			inventory.moveToPrevious();
+		}
+	}
 
 	@Override
 	public double getHealth() {
@@ -295,9 +313,9 @@ public class Player extends GameObject implements Damagable, DamageInflicter {
 	}
 
 	private double calcAngleBasedOnMouse() {
-		double dx = mouseX - getX();
+		double dx = getRoom().getView().getMouseX() - getX();
 		// Minus to correct for coord re-mapping
-		double dy = -(mouseY - getY());
+		double dy = -(getRoom().getView().getMouseY() - getY());
 
 		double inRads = Math.atan2(dy, dx);
 

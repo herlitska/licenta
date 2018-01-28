@@ -47,7 +47,7 @@ public class MainApp extends Application {
 	public void showGameWindow(GameWindow gameWindow) {
 
 		primaryStage.setScene(gameWindow.getScene());
-		primaryStage.setTitle("Zombie");
+		primaryStage.setTitle("Zombie Hunter");
 		primaryStage.setResizable(false);
 		primaryStage.setOnCloseRequest(e -> {
 			gameWindow.endLoop();

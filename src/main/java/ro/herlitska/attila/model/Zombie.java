@@ -7,15 +7,20 @@ import ro.herlitska.attila.model.GameSpriteFactory.ZombieMotion;
 public class Zombie extends GameObject implements Damagable, DamageInflicter {
 
 	private static final double ATTACK_RANGE = GameSpriteFactory.ZOMBIE_RADIUS;
-	private static final double ATTACK_DAMAGE = 1;
+	// private static final double ATTACK_DAMAGE = 1;
+	private static final double MAX_ATTACK_DAMAGE = 5;
+	private static final double MAX_SPEED = 5;
+
 	private static final int ATTACK_DELAY = 40;
 
 	private static int zombieCount = 0;
 	private static final int MAX_ZOMBIE_COUNT = 50;
-	
+	private static final int MAX_ZOMBIE_SPAWN_TRIES = 100;
+
 	private static int zombiesKilled = 0;
 
 	private double health = 5;
+	private final double attackDamage;
 
 	private int attackDelayCounter = 0;
 
@@ -25,16 +30,18 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 
 	private boolean newZombiesSpawned = false;
 
-	public Zombie(double x, double y) {
+	public Zombie(double x, double y, double attackDamage, double speed) {
 		super(x, y, GameSpriteFactory.getZombieSprite(ZombieMotion.RUN));
 		this.motion = ZombieMotion.RUN;
+		this.attackDamage = attackDamage;
+		setSpeed(speed);
 		getSprite().setAnimationSpeed(1);
-		this.setSpeed(5);
 		zombieCount++;
 	}
 
 	public Zombie(double x, double y, GameSprite sprite) {
 		super(x, y, sprite);
+		this.attackDamage = 1.0;
 	}
 
 	@Override
@@ -63,7 +70,7 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 		} else {
 			motion = ZombieMotion.DEATH;
 			setSprite(GameSpriteFactory.getZombieSprite(ZombieMotion.DEATH));
-			setSolid(false);			
+			setSolid(false);
 			if (!newZombiesSpawned) {
 				zombiesKilled++;
 				zombieCount--;
@@ -72,7 +79,7 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 					spawnZombies();
 				}
 			}
-			
+
 		}
 		// System.out.println(health);
 		// System.out.println(player.getMotion().toString());
@@ -92,7 +99,7 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 		if (other instanceof Player) {
 			playerInAttackRange = true;
 			if (health > 0 && attackDelayCounter > ATTACK_DELAY) {
-				other.damage(ATTACK_DAMAGE);
+				other.damage(attackDamage);
 				attackDelayCounter = 0;
 			}
 		}
@@ -129,7 +136,7 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 		else
 			inRads = 2 * Math.PI - inRads;
 
-		return Math.toDegrees(inRads);
+		return Math.toDegrees(inRads) + 0.01 * dx;
 	}
 
 	@Override
@@ -138,14 +145,29 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 	}
 
 	private void spawnZombies() {
-		int count = (int) Math.round(0.001 * Math.pow(getRoom().getSecondsPassed(), 2) + 1);
+		int secondsPassed = getRoom().getSecondsPassed();
+		int count = secondsPassed / 60 + 1;
 		Random rand = new Random();
 		for (int i = 0; i < count; i++) {
-			double zombieX = GameRoom.MARGIN_SIZE + 100
-					+ rand.nextInt((int) (GameRoom.ROOM_SIZE - 2 * (GameRoom.MARGIN_SIZE + 100)));
-			double zombieY = GameRoom.MARGIN_SIZE + 100
-					+ rand.nextInt((int) (GameRoom.ROOM_SIZE - 2 * (GameRoom.MARGIN_SIZE + 100)));
-			getRoom().createObject(new Zombie(zombieX, zombieY));
+			double newZombieAttackDamage = Math.min(0.5 + 0.05 * rand.nextDouble() * secondsPassed, MAX_ATTACK_DAMAGE);
+			double newZombieSpeed = Math.min(1 + 0.05 * rand.nextDouble() * secondsPassed, MAX_SPEED);
+			Zombie newZombie = new Zombie(0, 0, newZombieAttackDamage, newZombieSpeed);
+			double zombieX;
+			double zombieY;
+			int tries = 0;
+			do {
+				zombieX = GameRoom.MARGIN_SIZE + 100
+						+ rand.nextInt((int) (GameRoom.ROOM_SIZE - 2 * (GameRoom.MARGIN_SIZE + 100)));
+				zombieY = GameRoom.MARGIN_SIZE + 100
+						+ rand.nextInt((int) (GameRoom.ROOM_SIZE - 2 * (GameRoom.MARGIN_SIZE + 100)));
+				tries++;
+			} while ((getRoom().inCollision(newZombie, zombieX, zombieY, true)
+					|| getRoom().getView().inView(zombieX, zombieY)) && tries < MAX_ZOMBIE_SPAWN_TRIES);
+			if (tries < MAX_ZOMBIE_SPAWN_TRIES) {
+				newZombie.setX(zombieX);
+				newZombie.setY(zombieY);
+				getRoom().createObject(newZombie);
+			}
 		}
 	}
 
@@ -155,6 +177,6 @@ public class Zombie extends GameObject implements Damagable, DamageInflicter {
 
 	public static void resetKillCount() {
 		Zombie.zombiesKilled = 0;
-	}	
-	
+	}
+
 }

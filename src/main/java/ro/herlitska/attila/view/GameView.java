@@ -34,8 +34,15 @@ public interface GameView {
 	
 	public void drawGameOverMenu(List<Highscore> highscores, int currentPlayerIndex);
 	
+	public void drawGameOverMenuDbError();
+	
 	public void drawErrorMessage(String message);
 	
 	public void setGamePhase(GamePhase gamePhase);
+	
+	public double getMouseX();
+	
+	public double getMouseY();
 
+	public boolean inView(double x, double y);
 }

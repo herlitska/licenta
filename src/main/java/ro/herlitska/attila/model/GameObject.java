@@ -82,6 +82,10 @@ public abstract class GameObject {
 	public void mouseClickedEvent(MouseButton button, double x, double y) { // my addition
 
 	}
+	
+	public void scrollEvent(ScrollDirection direction) {
+		
+	}
 
 	@Override
 	public boolean equals(Object arg0) {
